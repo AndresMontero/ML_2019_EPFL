@@ -100,7 +100,14 @@ class DataPreprocessor:
         features = np.where(np.isnan(features), val, features)
         self.updateData(cols,features)
         
-    def nanStandardize(self, cols = None):
+    def removeNan(self,cols = None):
+        if not cols:
+            cols = self.cols
+        features = self.getFeatures(cols)
+        features = np.delete(features,np.isnan(features),axis = 0)
+        self.updateData(cols,features)
+        
+    def nanStandardizeFit(self, cols = None):
         if not cols:
             cols = [c for c in self.cols \
                     if (self.data_dict.get(c)[0] == self.FLOAT_TYPE\
@@ -117,6 +124,19 @@ class DataPreprocessor:
         std = np.nanstd(features, axis = 0)
         features = (features - mean)/std
         
+        self.updateData(cols,features)
+        
+        return cols,mean,std
+    
+    def nanStandardizeTransform(self,cols,mean,std):
+        
+        # Check if columns are float or float angle
+        for col in cols:
+            if self.data_dict.get(col)[0] != self.FLOAT_TYPE \
+            and self.data_dict.get(col)[0] != self.FLOAT_ANGLE_TYPE:
+                raise ValueError('Cannot standardize categorical columns')
+        features = self.getFeatures(cols)        
+        features = (features - mean)/std
         self.updateData(cols,features)
    
     def updateData(self,cols,features,dtypes_list = None):
@@ -160,20 +180,21 @@ class DataPreprocessor:
         self.updateData(ohe_cols,features,dtypes_list)
     
     def nanStatistics():
-        
+        # TODO
+        return
     
     def outlierRemoval():
         # TODO
         return
 
     
-    def multiHistPlots(tX,cols,size):
+def multiHistPlots(tX,cols,size):
     n = tX.shape[1]
     n_rows = np.ceil(np.sqrt(n)).astype(np.int64)
     n_cols = np.floor(np.sqrt(n)).astype(np.int64)
-    
+
     fig, axes = plt.subplots(nrows = n_rows, ncols = n_cols, figsize = size)
-    
+
     c = 0
     for row in range(n_rows):
         for col in range(n_cols):
