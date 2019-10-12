@@ -74,13 +74,13 @@ class DataPreprocessor:
         features_list = self.getFeaturesList(cols)
         return np.hstack(features_list)
     
-    def relabelYNonNegative():
+    def relabelYNonNegative(self):
         self.y[self.y == -1] = 0        
     
-    def relabelYNegative():
+    def relabelYNegative(self):
         self.y[self.y == 0] = -1
     
-    def getYLabels():
+    def getYLabels(self):
         return self.y
     
     def getFeaturesList(self,cols):
