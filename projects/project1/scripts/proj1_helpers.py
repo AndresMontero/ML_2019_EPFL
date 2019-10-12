@@ -48,7 +48,7 @@ def create_csv_submission(ids, y_pred, name):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
 
 class DataPreprocessor:
-    def __init__(self,tX,cols,dtypes):
+    def __init__(self,y,tX,cols,dtypes):
         assert tX.shape[1] == len(cols), "The number of columns of data does not match the number of column names"
         assert len(cols) == len(dtypes), "The number f column names must match the number of dtypes"
         self.CATEGORICAL_TYPE = 'categorical'
@@ -60,6 +60,7 @@ class DataPreprocessor:
         features = list(tX.T)
         dtypes_features = [list(x) for x in zip(dtypes, features)]
         self.data_dict = dict(zip(cols,dtypes_features))
+        self.y = y
         
     def dropFeatures(self,cols):
         for c in cols:
@@ -72,6 +73,15 @@ class DataPreprocessor:
             cols = self.cols
         features_list = self.getFeaturesList(cols)
         return np.hstack(features_list)
+    
+    def relabelYNonNegative():
+        self.y[self.y == -1] = 0        
+    
+    def relabelYNegative():
+        self.y[self.y == 0] = -1
+    
+    def getYLabels():
+        return self.y
     
     def getFeaturesList(self,cols):
         return [self.data_dict.get(c)[1].reshape(-1,1) for c in cols]
