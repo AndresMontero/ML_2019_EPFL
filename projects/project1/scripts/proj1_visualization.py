@@ -1,4 +1,12 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
 def multiHistPlots(x,figsize = (15,15)):
+    """Plot multiple histograms from the columns of a matrix.
+
+        Args:
+            x (numpy.ndarray): a matrix
+    """
     n = x.shape[1]
     n_rows = np.ceil(np.sqrt(n)).astype(np.int64)
     n_cols = np.floor(np.sqrt(n)).astype(np.int64)
