@@ -2,6 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def multiHistPlots(x,figsize = (15,15)):
+    """Plot multiple histograms from the columns of a matrix.
+        Args:
+            x (numpy.ndarray): a matrix
+    """
     n = x.shape[1]
     n_rows = np.ceil(np.sqrt(n)).astype(np.int64)
     n_cols = np.floor(np.sqrt(n)).astype(np.int64)
@@ -24,7 +28,7 @@ def multiHistPlots(x,figsize = (15,15)):
                 ax.set_xlabel('Value')
                 ax.set_ylabel('Probability')
             c += 1
-    plt.show()    
+    plt.show()
 
 def plot_figures(x_dim, y_dim1, y_dim2, title, legend):
     plt.figure(1, figsize=(18,12))

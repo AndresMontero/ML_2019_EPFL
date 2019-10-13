@@ -2,6 +2,18 @@ import numpy as np
 
 
 ################################################## Utils for Logistic and Regularized Logistic Regression
+def compute_mse(y, tx, w):
+    """Compute the Mean Squared Error (MSE).
+    Args:
+        y  (numpy.ndarray): the ground truth labels
+        tx (numpy.ndarray): the features
+        w  (numpy.ndarray): the weights
+    Returns:
+        numpy.float64: the MSE 
+    """
+    e=y-np.dot(tx,w)
+    return (1/(2*y.shape[0]))*np.dot(e.T,e)
+
 def sigmoid(t):
     """Apply sigmoid function on t
     
