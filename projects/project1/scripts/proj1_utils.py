@@ -83,7 +83,18 @@ def one_hot_encode(x):
 
 def add_bias(x):
     return np.hstack((np.ones(x.shape[0]).reshape(-1,1),x))
-   
+ 
+def build_poly(x, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""   
+    if len(x.shape) == 1:
+        x_res = x.reshape(-1,1)
+    else:
+        x_res = x
+    bias = np.ones(x_res.shape[0]).reshape(-1,1)
+    ext_x = np.repeat(x_res,degree,axis = 1)
+    powers = np.repeat(np.asarray(range(1,degree+1)).reshape(1,-1),x_res.shape[1],axis = 0).ravel()
+    return np.hstack((bias,np.power(ext_x,powers)))    
+    
 def split_data(x, y, ratio, seed=1):
     """
     split the dataset based on the split ratio. If ratio is 0.8 
