@@ -14,13 +14,13 @@ def nan_standardize_fit(x):
     std = np.nanstd(x, axis = 0)
     return (x - mean)/std , mean, std
 
-def nan_standardize_with_median_fit(x):                               
-    median = np.nanmedian(x, axis = 0)
-    iqr,_,_ = calculate_iqr(x)  
-    return 2*(x - median)/iqr , median, iqr
+# def nan_standardize_with_median_fit(x):                               
+#     median = np.nanmedian(x, axis = 0)
+#     iqr,_,_ = calculate_iqr(x)  
+#     return 2*(x - median)/iqr , median, iqr
 
-def nan_standardize_with_median_transform(x,median,iqr):                             
-    return 2*(x - median)/iqr 
+# def nan_standardize_with_median_transform(x,median,iqr):                             
+#     return 2*(x - median)/iqr 
     
 def nan_standardize_transform(x,mean,std):
     return (x - mean)/std
@@ -83,7 +83,7 @@ def one_hot_encode(x):
 
 def add_bias(x):
     return np.hstack((np.ones(x.shape[0]).reshape(-1,1),x))
- 
+
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""   
     if len(x.shape) == 1:
@@ -93,8 +93,8 @@ def build_poly(x, degree):
     bias = np.ones(x_res.shape[0]).reshape(-1,1)
     ext_x = np.repeat(x_res,degree,axis = 1)
     powers = np.repeat(np.asarray(range(1,degree+1)).reshape(1,-1),x_res.shape[1],axis = 0).ravel()
-    return np.hstack((bias,np.power(ext_x,powers)))    
-    
+    return np.hstack((bias,np.power(ext_x,powers))) 
+     
 def split_data(x, y, ratio, seed=1):
     """
     split the dataset based on the split ratio. If ratio is 0.8 
@@ -113,6 +113,9 @@ def split_data(x, y, ratio, seed=1):
     y_shuffled = y[idx]
     return x_shuffled[:n_train],y_shuffled[:n_train],x_shuffled[n_train:],y_shuffled[n_train:]
     
+def get_label_y_counts(y):
+    return np.unique(y,return_counts=True)
+
     # def getFeatures(self, cols = None):
     #     if not cols:
     #         cols = self.cols
@@ -236,27 +239,3 @@ def split_data(x, y, ratio, seed=1):
     #     return
 
     
-def multiHistPlots(x,figsize = (15,15)):
-    n = x.shape[1]
-    n_rows = np.ceil(np.sqrt(n)).astype(np.int64)
-    n_cols = np.floor(np.sqrt(n)).astype(np.int64)
-
-    if n_rows * n_cols < n:
-        n_cols = np.ceil(np.sqrt(n)).astype(np.int64)
-
-    fig, axes = plt.subplots(nrows = n_rows, ncols = n_cols, figsize = figsize)
-
-    c = 0
-    for row in range(n_rows):
-        for col in range(n_cols):
-            if n > 1:
-                ax = axes[row][col]
-            else:
-                ax = axes
-            if c < x.shape[1]:
-                ax.hist(x[:,c], label = 'feature_{:d}'.format(c),density = True)
-                ax.legend(loc = 'upper left')
-                ax.set_ylabel('Probability')
-                ax.set_xlabel('Value')
-            c += 1
-    plt.show()    
