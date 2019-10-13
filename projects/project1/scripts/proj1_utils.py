@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt 
 
 def split_numerical_categorical(x,cat_cols):
     x_num = np.delete(x,cat_cols,axis = 1)
@@ -8,11 +9,19 @@ def split_numerical_categorical(x,cat_cols):
 def replace_undef_val_with_nan(x):
     return np.where(x == -999.0, np.nan, x)
 
-def nan_standardize_fit(x):                                # PRI_jet_num 
+def nan_standardize_fit(x):                                
     mean = np.nanmean(x, axis = 0)
     std = np.nanstd(x, axis = 0)
     return (x - mean)/std , mean, std
 
+def nan_standardize_with_median_fit(x):                               
+    median = np.nanmedian(x, axis = 0)
+    iqr,_,_ = calculate_iqr(x)  
+    return 2*(x - median)/iqr , median, iqr
+
+def nan_standardize_with_median_transform(x,median,iqr):                             
+    return 2*(x - median)/iqr 
+    
 def nan_standardize_transform(x,mean,std):
     return (x - mean)/std
 
@@ -20,14 +29,39 @@ def relabel_y_non_negative(y):
     new_y = y.copy()
     new_y[new_y == -1] = 0
     return new_y
+ 
+def relabel_y_negative(y):
+    new_y = y.copy()
+    new_y[new_y == 0] = -1
+    return new_y
         
 def replace_nan_val_with_mean(x):
     means = np.nanmean(x,axis = 0)
     n_cols = x.shape[1]
     new_x = x.copy()
     for i in range(n_cols):
-        new_x[:i] = np.where(np.isnan(new_x[:,i]), means[i], new_x[:,i])
+        new_x[:,i] = np.where(np.isnan(new_x[:,i]), means[i], new_x[:,i])
     return new_x
+
+def replace_nan_val_with_zero(x):
+    n_cols = x.shape[1]
+    new_x = x.copy()
+    for i in range(n_cols):
+        new_x[:,i] = np.where(np.isnan(new_x[:,i]), 0, new_x[:,i])
+    return new_x
+
+def calculate_iqr(x):
+    q1 = np.quantile(x,0.25,axis = 0)
+    q3 = np.quantile(x,0.75,axis = 0)
+    return q3 - q1, q1, q3
+
+def replace_iqr_outliers(x):
+    iqr, q1, q3= calculate_iqr(x)
+    upper_bound = q3 + iqr * 1.5
+    lower_bound = q1 - iqr * 1.5
+    x_trunc_up = np.where(x > upper_bound,upper_bound,x)
+    x_trunc_low = np.where(x_trunc_up < lower_bound,lower_bound,x_trunc_up)
+    return x_trunc_low
 
 def replace_nan_val_with_median(x):
     medians = np.nanmedian(x,axis = 0)
@@ -35,14 +69,6 @@ def replace_nan_val_with_median(x):
     new_x = x.copy()
     for i in range(n_cols):
         new_x[:,i] = np.where(np.isnan(new_x[:,i]), medians[i], new_x[:,i])
-    return new_x
-
-def replace_nan_val_with_mode(x):
-    modes = np.nanmode(x,axis = 0)
-    n_cols = x.shape[1]
-    new_x = x.copy()
-    for i in range(n_cols):
-        new_x[:i] = np.where(np.isnan(new_x[:,i]), modes[i], new_x[:,i])
     return new_x
 
 def one_hot_encode(x):
@@ -57,7 +83,25 @@ def one_hot_encode(x):
 
 def add_bias(x):
     return np.hstack((np.ones(x.shape[0]).reshape(-1,1),x))
-        
+   
+def split_data(x, y, ratio, seed=1):
+    """
+    split the dataset based on the split ratio. If ratio is 0.8 
+    you will have 80% of your data set dedicated to training 
+    and the rest dedicated to testing
+    """
+    # set seed
+    np.random.seed(seed)
+    # ***************************************************
+    # INSERT YOUR CODE HERE
+    # split the data based on the given ratio: TODO
+    # ***************************************************
+    n_train = round(y.shape[0]*ratio)
+    idx = np.random.permutation(range(y.shape[0]))
+    x_shuffled = x[idx]
+    y_shuffled = y[idx]
+    return x_shuffled[:n_train],y_shuffled[:n_train],x_shuffled[n_train:],y_shuffled[n_train:]
+    
     # def getFeatures(self, cols = None):
     #     if not cols:
     #         cols = self.cols
@@ -181,19 +225,25 @@ def add_bias(x):
     #     return
 
     
-def multiHistPlots(tX,cols,size):
-    n = tX.shape[1]
+def multiHistPlots(x,figsize = (15,15)):
+    n = x.shape[1]
     n_rows = np.ceil(np.sqrt(n)).astype(np.int64)
     n_cols = np.floor(np.sqrt(n)).astype(np.int64)
 
-    fig, axes = plt.subplots(nrows = n_rows, ncols = n_cols, figsize = size)
+    if n_rows * n_cols < n:
+        n_cols = np.ceil(np.sqrt(n)).astype(np.int64)
+
+    fig, axes = plt.subplots(nrows = n_rows, ncols = n_cols, figsize = figsize)
 
     c = 0
     for row in range(n_rows):
         for col in range(n_cols):
-            ax = axes[row][col]
-            if c < tX.shape[1]:
-                ax.hist(tX[:,c], label = '{}'.format(cols[c]),density = True)
+            if n > 1:
+                ax = axes[row][col]
+            else:
+                ax = axes
+            if c < x.shape[1]:
+                ax.hist(x[:,c], label = 'feature_{:d}'.format(c),density = True)
                 ax.legend(loc = 'upper left')
                 ax.set_ylabel('Probability')
                 ax.set_xlabel('Value')
