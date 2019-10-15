@@ -62,7 +62,7 @@ x_test = np.hstack((x_test_poly,x_test_ohe_cat))
 print("Training model...")
 max_iters = 1000
 w_initial = np.zeros((x_train.shape[1], 1))
-weights,_,_ = reg_logistic_regression(y_train, x_train, w_initial, max_iters, gamma, lambda_)
+weights,_ = reg_logistic_regression(y_train, x_train, w_initial, max_iters, gamma, lambda_)
 
 print("Predicting test labels...")
 y_pred = predict_labels(weights, x_test)
