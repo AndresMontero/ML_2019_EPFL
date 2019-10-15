@@ -2,3 +2,4 @@
 *.csv
 projects/project1/data/test.csv.zip
 projects/project1/documentation_v1.8.pdf
+*.pyc
