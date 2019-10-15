@@ -23,11 +23,11 @@ def multiHistPlots(x,figsize = (15,15)):
             else:
                 ax = axes
             if c < x.shape[1]:
-                ax.hist(x[:,c], label = 'feature_{:d}'.format(c),density = True)
+                ax.hist(x[:,c], label = 'feature_{:d}'.format(c), density = True)
                 ax.legend(loc = 'upper left')
                 ax.set_xlabel('Value')
                 ax.set_ylabel('Probability')
-            c += 1
+            c = c + 1
     plt.show()
 
 def plot_figures(x_dim, y_dim1, y_dim2, title, legend):
