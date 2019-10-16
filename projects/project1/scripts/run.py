@@ -1,8 +1,8 @@
 """ Course: Machine Learning
-    Projeect 1
+    Projeect 1: The Higgs bosson machine learning challenge
     Authors:
         - Maraz Erick
-        - Moentero Andres
+        - Montero Andres
         - Villarroel Adrian
     This script runs the best ML model and generates the 
     submission file.
@@ -26,7 +26,7 @@ print("Preprocessing data...")
 cat_cols = [22]             # PRI_jet_num column number 
 # Tuned hyperparameters
 degree = 3     
-gamma = 0.0000007
+gamma = 1e-6
 lambda_ = 0.001
 
 """ Preprocess training data """
