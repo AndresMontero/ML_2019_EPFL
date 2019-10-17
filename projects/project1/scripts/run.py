@@ -26,7 +26,7 @@ print("Preprocessing data...")
 cat_cols = [22]             # PRI_jet_num column number 
 # Tuned hyperparameters
 degree = 3     
-gamma = 1e-6
+gamma = 2.2e-6
 lambda_ = 0.001
 
 """ Preprocess training data """
@@ -43,6 +43,9 @@ x_train_ohe_cat = one_hot_encode(x_train_cat)
 x_train = np.hstack((x_train_poly,x_train_ohe_cat))
 # Preprocess labels
 y_train = relabel_y_non_negative(y_train_raw).reshape(-1,1) # Binary logistic regression accepts labels 0 or 1
+
+""" Split in training and validation sets"""
+x_train,  y_train, x_val, y_val = split_data(x_train,y_train,0.8)
 
 """ Preprocess test data """
 
@@ -64,11 +67,17 @@ max_iters = 1000
 w_initial = np.zeros((x_train.shape[1], 1))
 weights,_ = reg_logistic_regression(y_train, x_train, w_initial, max_iters, gamma, lambda_)
 
+print("Validating model...")
+y_pred_val = predict_labels(weights,x_val)
+y_val = relabel_y_negative(y_val)
+acc_val = get_accurarcy_score(y_pred_val,y_val)
+print("Accuracy on validation set: "+str(acc_val))
+
 print("Predicting test labels...")
 y_pred = predict_labels(weights, x_test)
 
 print("Generating file for submission...")
-create_csv_submission(ids_test, y_pred, "Ashura_submission.csv")
+create_csv_submission(ids_test, y_pred, "Reg_log_reg_submission.csv")
 print("File generated")
 
 
