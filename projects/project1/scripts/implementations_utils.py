@@ -94,7 +94,7 @@ def learning_by_reg_gradient_descent_log(y, tx, w, gamma, lambda_):
         loss => (numpy.array): Calculated Loss
     """
 
-    loss = calculate_loss_log(y, tx, w) + lambda_ * np.squeeze(w.T.dot(w))
-    grad = calculate_gradient_log(y, tx, w) + 2 * lambda_ * w
+    loss = calculate_loss_log(y, tx, w) + (lambda_/2) * np.linalg.norm(w,2)
+    grad = calculate_gradient_log(y, tx, w) + lambda_ * w
     w -= gamma * grad
     return loss, w
