@@ -200,7 +200,7 @@ def cross_validation_log(x, y, lambda_=0, gamma=0.001, max_iters=1000, k_fold=in
         w_initial = np.zeros((x_train.shape[1], 1))
 
         # Use regularized logistic regression/ change for logistic_regression 
-        weights,_,_ = reg_logistic_regression(y_train, x_train, w_initial, max_iters, gamma, lambda_)
+        weights,_ = reg_logistic_regression(y_train, x_train, w_initial, max_iters, gamma, lambda_)
             
         loss_tr = np.sqrt(2 * calculate_loss_log(y_train, x_train, weights))
         loss_val = np.sqrt(2 * calculate_loss_log(y_val, x_val, weights))
