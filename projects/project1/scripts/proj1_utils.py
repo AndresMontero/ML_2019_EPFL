@@ -184,6 +184,9 @@ def build_poly(x, degree):
             numpy.ndarray: the matrix with polynomial features
     """
 
+    if degree == 0:
+        return x
+    
     if len(x.shape) == 1:
         x_res = x.reshape(-1,1)
     else:

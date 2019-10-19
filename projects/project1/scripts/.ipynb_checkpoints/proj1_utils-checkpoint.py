@@ -16,7 +16,7 @@ def split_numerical_categorical(x,cat_cols):
     return x_num, x_cat
 
 def replace_undef_val_with_nan(x):
-    """Replace the undefined values with nan
+    """Replace the undefined values with nan.
        Args:
             x (numpy.ndarray): the feature matrix
        Returns:
@@ -27,7 +27,7 @@ def replace_undef_val_with_nan(x):
     return np.where(x == -999.0, np.nan, x)
 
 def nan_standardize_fit(x): 
-    """Standardize and get the means and standard deviations
+    """Standardize and get the means and standard deviations.
        Args:
             x (numpy.ndarray): the feature matrix
        Returns:
@@ -41,7 +41,7 @@ def nan_standardize_fit(x):
     return (x - mean)/std , mean, std
 
 def nan_standardize_transform(x,mean,std):
-    """Standardize with given means and standard deviations
+    """Standardize with given means and standard deviations.
         Args:
             x (numpy.ndarray): the feature matrix
         Returns:
@@ -51,7 +51,7 @@ def nan_standardize_transform(x,mean,std):
     return (x - mean)/std
 
 def relabel_y_non_negative(y):
-    """Relabel -1 ground truth labels to 0
+    """Relabel -1 ground truth labels to 0.
         Args:
             y (numpy.ndarray): the ground truth labels
         Returns:
@@ -63,7 +63,7 @@ def relabel_y_non_negative(y):
     return new_y
  
 def relabel_y_negative(y):
-    """Relabel 0 ground truth labels to -1
+    """Relabel 0 ground truth labels to -1.
        Args:
             y (numpy.ndarray): the ground truth labels
        Returns:
@@ -75,7 +75,7 @@ def relabel_y_negative(y):
     return new_y
         
 def replace_nan_val_with_mean(x):
-    """Replace nan values with the mean of the column
+    """Replace nan values with the mean of the column.
        Args:
             x (numpy.ndarray): the feature matrix
        Returns:
@@ -90,7 +90,7 @@ def replace_nan_val_with_mean(x):
     return new_x
 
 def replace_nan_val_with_zero(x):
-    """Replace nan values with 0
+    """Replace nan values with 0.
         Args:
             x (numpy.ndarray): the feature matrix
         Returns:
@@ -104,7 +104,7 @@ def replace_nan_val_with_zero(x):
     return new_x
 
 def calculate_iqr(x):
-    """Calculate the Interquartile range
+    """Calculate the Interquartile range.
         Args:
             x (numpy.ndarray): the feature matrix
         Returns:
@@ -119,7 +119,7 @@ def calculate_iqr(x):
 
 def replace_iqr_outliers(x):
     """Replace points outside the bounds given by 
-       first, third quartiles and the interquartile range
+       first, third quartiles and the interquartile range.
         Args: 
             x (numpy.ndarray): the feature matrix
         Returns:
@@ -134,7 +134,7 @@ def replace_iqr_outliers(x):
     return x_trunc_low
 
 def replace_nan_val_with_median(x):
-    """Replace nan values with median
+    """Replace nan values with median.
         Args:
             x (numpy.ndarray): the feature matrix
         Returns:
@@ -149,7 +149,7 @@ def replace_nan_val_with_median(x):
     return new_x
 
 def one_hot_encode(x):
-    """One hot encode features
+    """One hot encode features.
         Args:
             x (numpy.ndarray): a vector Nx1 containing categorical values
         Returns:
@@ -165,7 +165,7 @@ def one_hot_encode(x):
     return ohe_x
 
 def add_bias(x):
-    """Add bias column to feature matrix
+    """Add bias column to feature matrix.
         Args:
             x (numpy.ndarray): the feature matrix
         Returns:
@@ -184,6 +184,9 @@ def build_poly(x, degree):
             numpy.ndarray: the matrix with polynomial features
     """
 
+    if degree == 0:
+        return x
+    
     if len(x.shape) == 1:
         x_res = x.reshape(-1,1)
     else:
@@ -215,7 +218,7 @@ def split_data(x, y, ratio, seed=1):
     return x_shuffled[:n_train],y_shuffled[:n_train],x_shuffled[n_train:],y_shuffled[n_train:]
     
 def get_label_y_counts(y):
-    """Get the count of each ground truth label 
+    """Get the count of each ground truth label. 
         Args:
             y (numpy.ndarray): the ground truth labels
         Returns:
@@ -223,3 +226,14 @@ def get_label_y_counts(y):
     """
     
     return np.unique(y,return_counts=True)
+
+def get_accurarcy_score(y_pred,y_val):
+    """Get the accuracy score.
+        Args:
+            y_pred (numpy.array): the predicted labels
+            y_val (numpy.array): the ground truth labels
+        Returns:
+            numpy.in64: the accuracy score. Range 0 to 1.
+
+    """
+    return np.sum(y_pred == y_val)/len(y_pred)
