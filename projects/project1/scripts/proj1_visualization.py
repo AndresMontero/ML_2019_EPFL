@@ -32,12 +32,12 @@ def multiHistPlots(x,figsize = (15,15)):
 
 def plot_figures(x_dim, y_dim1, y_dim2, title, legend, y_label,x_label):
     fig = plt.figure(1, figsize=(18,12))
-    plt.title(title)
+    plt.title(title, fontsize=18)
     plt.plot(x_dim, y_dim1)
     plt.plot(x_dim, y_dim2, 'r')
     plt.grid(True)
     plt.legend(legend)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+    plt.xlabel(x_label, fontsize=18)
+    plt.ylabel(y_label, fontsize=18)
     plt.show()
     return fig
