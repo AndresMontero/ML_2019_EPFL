@@ -1,7 +1,62 @@
 import numpy as np
 from implementations_utils import *
 
+############################### Linear Regression - iterative models
 
+def least_squares_GD(y, tx, initial_w, max_iters, gamma):
+    """Calculate the loss and weights with gradient descent
+       linear regression
+    Args:
+        y  (numpy.ndarray): the ground truth labels
+        tx (numpy.ndarray): the features
+        initial_w  (numpy.ndarray): the initial weights
+        max_iters (int): number of iterations
+        gamma  (float): learning rate
+    
+    Returns: 
+        w numpy.ndarray: the optimum weights
+        loss float: the MSE   
+    """
+    loss = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        gradient = compute_gradient_mse(y,tx,w)
+        w = w-gamma*gradient
+        if (n_iter % 50 == 0):
+            loss = compute_mse(y,tx,w)
+            print("GD({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+                  bi=n_iter+1, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+
+    return w,loss
+    
+def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
+    """Calculate the loss and weights with stochastic gradient descent
+       linear regression
+    Args:
+        y  (numpy.ndarray): the ground truth labels
+        tx (numpy.ndarray): the features
+        initial_w  (numpy.ndarray): the initial weights
+        max_iters (int): number of iterations
+        batch_size (int): batch size - number of columns
+        gamma  (float): learning rate
+    
+    Returns: 
+        w numpy.ndarray: the optimum weights
+        loss float: the MSE   
+    """
+    loss = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
+            gradient = compute_gradient_mse(minibatch_y,minibatch_tx,w)
+            w = w-gamma*gradient
+            if (n_iter % 50 == 0):
+                loss = compute_mse(minibatch_y,minibatch_tx,w)
+                print("SGD({bi}/{ti}): loss={l}, w(0)={w0}, w1={w1}".format(
+                      bi=n_iter-1, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+    return w,loss
+
+################################### Least Squares
 
 def least_squares(y, tx):
     """Calculate the least squares solution.
