@@ -67,7 +67,7 @@ def degree_lambda_grid_search(y, x, cat_cols, ratio_train, method_flag, degrees,
                 
             elif method_flag == 2:
                 # Least squares SGD
-                w_star, _ = least_squares_SGD(y_train,x_train,w_initial,1,max_iters,gamma)
+                w_star, _ = least_squares_SGD(y_train,x_train,w_initial,max_iters,gamma)
         
             elif method_flag == 3:
                 # Least squares
