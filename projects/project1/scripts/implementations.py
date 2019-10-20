@@ -111,18 +111,15 @@ def logistic_regression(y, tx, w_initial, max_iters, gamma):
     
     print_every = 250
     w = w_initial
-    losses =[]
     for n_iter in range(max_iters+1):
         loss, w = learning_by_gradient_descent_log(y, tx, w, gamma)
         if (n_iter % print_every == 0):
             # print average loss for the last print_every iterations
             print(f"#Iteration: {n_iter}, Loss: {loss}")
-            losses.append(loss)
-
-            
+      
     loss = learning_by_gradient_descent_log(y, tx, w, gamma)
     
-    return w, loss,losses
+    return w, loss
 
 ################################### Regularized Logistic Regression
 
