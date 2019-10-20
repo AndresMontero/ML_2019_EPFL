@@ -1,7 +1,5 @@
 import numpy as np
 
-
-################################################## Utils for Logistic and Regularized Logistic Regression
 def compute_mse(y, tx, w):
     """Compute the Mean Squared Error (MSE).
     Args:
@@ -13,6 +11,7 @@ def compute_mse(y, tx, w):
     """
     e=y-np.dot(tx,w)
     return (1/(2*y.shape[0]))*np.dot(e.T,e)
+################################################## Utils for Logistic and Regularized Logistic Regression
 
 def sigmoid(t):
     """Apply sigmoid function on t
