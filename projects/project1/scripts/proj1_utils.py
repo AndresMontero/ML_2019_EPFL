@@ -164,15 +164,39 @@ def one_hot_encode(x):
             ohe_x[int(row),int(col)] = 1
     return ohe_x
 
-def add_bias(x):
-    """Add bias column to feature matrix.
-        Args:
-            x (numpy.ndarray): the feature matrix
-        Returns:
-            numpy.ndarray: a feature matrix with the bias terms (1s) in the first column
-    """
+def preprocess_num_features_fit(x_num):
+    """Preprocess numerical features and return means and stds:
 
-    return np.hstack((np.ones(x.shape[0]).reshape(-1,1),x))
+        Args:
+            x_num (numpy.ndarray): numerical features
+        Returns:
+            numpy.ndarray: clean numerical features
+            numpy.ndarray: mean of each feature
+            numpy.ndarray: std of each feature
+    """
+    x_num_nan = replace_undef_val_with_nan(x_num)
+    x_num_std, mean, std = nan_standardize_fit(x_num_nan)
+    x_num_valid = replace_nan_val_with_median(x_num_std)
+    x_num_rm_outlier = replace_iqr_outliers(x_num_valid)
+
+    return x_num_rm_outlier, mean, std
+
+def preprocess_num_features_transform(x_num, mean, std):
+    """Preprocess numerical features given the mean and std:
+
+        Args:
+            x_num (numpy.ndarray): numerical features
+        Returns:
+            numpy.ndarray: clean numerical features
+            numpy.ndarray: mean of each feature
+            numpy.ndarray: std of each feature
+    """
+    x_num_nan = replace_undef_val_with_nan(x_num)
+    x_num_std = nan_standardize_transform(x_num_nan,mean,std)
+    x_num_valid = replace_nan_val_with_median(x_num_std)
+    x_num_rm_outlier = replace_iqr_outliers(x_num_valid)
+
+    return x_num_rm_outlier
 
 def build_poly(x, degree):
     """Polynomial basis functions for input data x, for j=0 up to j=degree.
