@@ -1,5 +1,6 @@
 import numpy as np
 from implementations_utils import *
+from proj1_helpers import *
 
 ############################### Linear Regression - iterative models
 
@@ -47,14 +48,14 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     batch_size = 1
     loss = []
     w = initial_w
-    for n_iter in range(max_iters):
+    for n_iter in range(1,max_iters+1):
         for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
             gradient = compute_gradient_mse(minibatch_y,minibatch_tx,w)
             w = w-gamma*gradient
             if (n_iter % 50 == 0):
                 loss = compute_mse(minibatch_y,minibatch_tx,w)
                 print("SGD({bi}/{ti}): loss={l}, w(0)={w0}, w1={w1}".format(
-                      bi=n_iter-1, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+                      bi=n_iter, ti=max_iters, l=loss, w0=w[0], w1=w[1]))
     return w,loss
 
 ################################### Least Squares
