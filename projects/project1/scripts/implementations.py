@@ -29,7 +29,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 
     return w,loss
     
-def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
+def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     """Calculate the loss and weights with stochastic gradient descent
        linear regression
     Args:
@@ -44,6 +44,7 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
         w numpy.ndarray: the optimum weights
         loss float: the MSE   
     """
+    batch_size = 1
     loss = []
     w = initial_w
     for n_iter in range(max_iters):
