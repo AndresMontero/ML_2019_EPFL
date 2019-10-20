@@ -97,3 +97,44 @@ def learning_by_reg_gradient_descent_log(y, tx, w, gamma, lambda_):
     grad = calculate_gradient_log(y, tx, w) + lambda_ * w
     w -= gamma * grad
     return loss, w
+
+##########
+def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
+    """
+    Generate a minibatch iterator for a dataset.
+    Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
+    Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
+    Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
+    Example of use :
+    for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
+        <DO-SOMETHING>
+    """
+    data_size = len(y)
+
+    if shuffle:
+        shuffle_indices = np.random.permutation(np.arange(data_size))
+        shuffled_y = y[shuffle_indices]
+        shuffled_tx = tx[shuffle_indices]
+    else:
+        shuffled_y = y
+        shuffled_tx = tx
+    for batch_num in range(num_batches):
+        start_index = batch_num * batch_size
+        end_index = min((batch_num + 1) * batch_size, data_size)
+        if start_index != end_index:
+            yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
+            
+            
+def compute_gradient_mse(y, tx, w):
+    """Compute the Gradient (MSE).
+    Args:
+        y  (numpy.ndarray): the ground truth labels
+        tx (numpy.ndarray): the features
+        w  (numpy.ndarray): the weights
+    Returns:
+        numpy.float64: the Gradient
+    """
+    error = y - np.dot(tx,w)
+    return -1/len(y)*np.dot(tx.T,error)
+
+##########
