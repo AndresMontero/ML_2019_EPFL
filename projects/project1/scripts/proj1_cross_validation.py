@@ -4,7 +4,15 @@ from proj1_utils import *
 from proj1_helpers import *
 
 def build_k_indices(y, k_fold, seed):
-    """build k indices for k-fold."""
+    """Build k indices for k-fold.
+
+       Args: 
+            y      (numpy.ndarray): ground truth labels
+            k_fold (int)          : number of current fold 
+            seed   (int)          : seed for random methods
+        Returns:
+            numpy.ndarray         : array of indices for the k-fold
+    """
 
     num_row = y.shape[0]
     interval = int(num_row / k_fold)
@@ -13,6 +21,124 @@ def build_k_indices(y, k_fold, seed):
     k_indices = [indices[k * interval: (k + 1) * interval]
                  for k in range(k_fold)]
     return np.array(k_indices)
+
+def degree_lambda_grid_search(y, x, cat_cols, ratio_train, method_flag, degrees, lambdas, gamma = 1e-6, max_iters = 2000, seed = 10):
+    """Return the best degree and lambda for a specified method
+
+        It is similar to crossvalidationo, however there is 
+
+        Args:
+            y           (numpy.array)   : ground truth labels
+            x           (numpy.ndarray) : clean data
+            cat_cols    (list)          : categorical columns
+            ratio_train (float)         : proportion of data to use for training
+            method_flag (int)           : flag indicating the method to use
+            degrees     (numpy.ndarray) : degrees to evaluate
+            lambdas     (numpy.ndarray) : lambdas to evaluate
+            seed        (int)           : seed for random methods
+        Returns
+            int           : best degree
+            float         : best lambda
+            float         : accuracy score
+            numpy.ndarray : accuracy scores grid
+    """
+    x_train, y_train, x_val, y_val = split_data(x, y, ratio_train, seed)
+
+    x_train_num, x_train_cat = split_numerical_categorical(x_train, cat_cols)
+    x_val_num, x_val_cat = split_numerical_categorical(x_val, cat_cols)
+
+    x_train_num, mean, std = preprocess_num_features_fit(x_train_num)
+    x_val_num = preprocess_num_features_transform(x_val_num, mean, std)
+
+    x_train_ohe_cat = one_hot_encode(x_train_cat)
+    x_val_ohe_cat = one_hot_encode(x_val_cat)
+      
+    accuracy_scores_grid = np.zeros((len(degrees),len(lambdas)))
+    for (j,lambda_ )in enumerate(lambdas):
+        for (i,degree) in enumerate(degrees):
+            ext_x_train_num = build_poly(x_train_num, degree)
+            ext_x_val_num = build_poly(x_val_num, degree)
+            x_train = np.hstack((ext_x_train_num,x_train_ohe_cat))
+            x_val = np.hstack((ext_x_val_num, x_val_ohe_cat))
+            w_initial = np.zeros((x_train.shape[1]))
+            if method_flag == 1:
+                # Least squares GD
+                w_star, _ = least_squares_GD(y_train,x_train,w_initial,max_iters,gamma)
+                
+            elif method_flag == 2:
+                # Least squares SGD
+                w_star, _ = least_squares_SGD(y_train,x_train,w_initial,1,max_iters,gamma)
+        
+            elif method_flag == 3:
+                # Least squares
+                w_star, _ = least_squares(y_train,x_train)
+
+            elif method_flag == 4:
+                # Ridge regression
+                w_star, _ = ridge_regression(y_train,x_train,lambda_)
+
+            elif method_flag == 5:
+                # Logistic regression
+                y_train = relabel_y_non_negative(y_train)
+                w_star, _ ,_ = logistic_regression(y_train,x_train,w_initial,max_iters,gamma)
+
+            elif method_flag == 6:
+                # Regularized logistic regression
+                y_train = relabel_y_non_negative(y_train)
+                w_star, _ = reg_logistic_regression(y_train,x_train,w_initial,max_iters,gamma,lambda_)
+
+            y_pred = predict_labels(w_star,x_val)
+            if method_flag == 5 or method_flag == 6:
+                y_pred = relabel_y_negative(y_pred)
+            accuracy_scores_grid[i,j] = get_accurarcy_score(y_pred,y_val)
+            degree_idx, lambda_idx = np.unravel_index(np.argmax(accuracy_scores_grid),accuracy_scores_grid.shape)
+            accuracy_score = accuracy_scores_grid[degree_idx, lambda_idx]
+            best_degree = degrees[degree_idx]
+            best_lambda = lambdas[lambda_idx]
+    return best_degree, best_lambda, accuracy_score, accuracy_scores_grid
+
+
+# def cross_validation(y, x, cat_cols, method_flag, k_indices, k, degree = None, lambda_ = None, gamma = None):
+#     """Return the train and test losses of the selected method for the current fold """
+#     train_indices = np.delete(k_indices,k,axis = 0).ravel()
+#     x_train = x[train_indices]
+#     y_train = y[train_indices]
+#     x_test = x[k_indices[k]]
+#     y_test = y[k_indices[k]]
+
+#     x_train_num, x_train_cat = split_numerical_categorical(x_train,cat_cols)
+#     x_test_num, x_test_cat = split_numerical_categorical(x_test,cat_cols)
+
+#     ext_x_train_num = build_poly(x_train_num,degree)
+#     ext_x_test_num = build_poly(x_test_num,degree)
+
+#     ext_x_train = np.hstack((ext_x_train_num,x_train_cat))
+#     ext_x_test = np.hstack((ext_x_test_num,x_test_cat))
+    
+#     if method_flag == 1:
+#         # Least squares GD
+
+#     elif method_flag == 2:
+#         # least squares SGD
+
+#     elif method_flag == 3:
+#         # least squares 
+
+#     elif method_flag == 4:
+#         # Ridge regression
+#         w_star = ridge_regression(y_train,tx_train,lambda_)      
+#     elif method_flag == 5:
+#         # Logistic regression
+
+#     elif method_flag == 6:
+#         # Regularized logistic regression
+        
+    
+    
+#     loss_tr = compute_mse(y_train,tx_train,w_star)
+#     loss_te = compute_mse(y_test,tx_test,w_star)
+#     return loss_tr, loss_te
+
 
 def cross_validation_lambda_ridge_reg(y, x, k_indices, k, lambda_):
     """Return the training and test loss of ridge regression for lambda 
