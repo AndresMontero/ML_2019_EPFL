@@ -251,7 +251,7 @@ def get_label_y_counts(y):
     
     return np.unique(y,return_counts=True)
 
-def get_accurarcy_score(y_pred,y_val):
+def get_accuracy_score(y_pred,y_val):
     """Get the accuracy score.
         Args:
             y_pred (numpy.array): the predicted labels
