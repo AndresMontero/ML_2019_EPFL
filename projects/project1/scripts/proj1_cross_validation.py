@@ -63,30 +63,31 @@ def degree_lambda_grid_search(y, x, cat_cols, ratio_train, method_flag, degrees,
             w_initial = np.zeros((x_train.shape[1]))
             if method_flag == 1:
                 # Least squares GD
-                w_star, _ = least_squares_GD(y_train,x_train,w_initial,max_iters,gamma)
+                w_star, loss = least_squares_GD(y_train,x_train,w_initial,max_iters,gamma)
                 
             elif method_flag == 2:
                 # Least squares SGD
-                w_star, _ = least_squares_SGD(y_train,x_train,w_initial,max_iters,gamma)
+                w_star, loss = least_squares_SGD(y_train,x_train,w_initial,max_iters,gamma)
         
             elif method_flag == 3:
                 # Least squares
-                w_star, _ = least_squares(y_train,x_train)
+                w_star, loss = least_squares(y_train,x_train)
 
             elif method_flag == 4:
                 # Ridge regression
-                w_star, _ = ridge_regression(y_train,x_train,lambda_)
+                w_star, loss = ridge_regression(y_train,x_train,lambda_)
 
             elif method_flag == 5:
                 # Logistic regression
                 y_train = relabel_y_non_negative(y_train)
-                w_star, _ ,_ = logistic_regression(y_train,x_train,w_initial,max_iters,gamma)
+                w_star, loss = logistic_regression(y_train,x_train,w_initial,max_iters,gamma)
 
             elif method_flag == 6:
                 # Regularized logistic regression
                 y_train = relabel_y_non_negative(y_train)
-                w_star, _ = reg_logistic_regression(y_train,x_train,w_initial,max_iters,gamma,lambda_)
-
+                w_star, loss = reg_logistic_regression(y_train,x_train,w_initial,max_iters,gamma,lambda_)
+            if loss == np.nan:
+                break
             y_pred = predict_labels(w_star,x_val)
             if method_flag == 5 or method_flag == 6:
                 y_pred = relabel_y_negative(y_pred)
