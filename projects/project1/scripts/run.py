@@ -70,7 +70,7 @@ weights,_ = reg_logistic_regression(y_train, x_train, w_initial, max_iters, gamm
 print("Validating model...")
 y_pred_val = predict_labels(weights,x_val)
 y_val = relabel_y_negative(y_val)
-acc_val = get_accurarcy_score(y_pred_val,y_val)
+acc_val = get_accuracy_score(y_pred_val,y_val)
 print("Accuracy on validation set: "+str(acc_val))
 
 print("Predicting test labels...")
