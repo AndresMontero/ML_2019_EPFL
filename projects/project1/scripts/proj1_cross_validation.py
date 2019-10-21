@@ -54,13 +54,14 @@ def degree_lambda_grid_search(y, x, cat_cols, ratio_train, method_flag, degrees,
     x_val_ohe_cat = one_hot_encode(x_val_cat)
       
     accuracy_scores_grid = np.zeros((len(degrees),len(lambdas)))
+    w_initial = np.zeros((x_train.shape[1]))
     for (j,lambda_ )in enumerate(lambdas):
         for (i,degree) in enumerate(degrees):
             ext_x_train_num = build_poly(x_train_num, degree)
             ext_x_val_num = build_poly(x_val_num, degree)
             x_train = np.hstack((ext_x_train_num,x_train_ohe_cat))
             x_val = np.hstack((ext_x_val_num, x_val_ohe_cat))
-            w_initial = np.zeros((x_train.shape[1]))
+            
             if method_flag == 1:
                 # Least squares GD
                 w_star, loss = least_squares_GD(y_train,x_train,w_initial,max_iters,gamma)
@@ -91,7 +92,7 @@ def degree_lambda_grid_search(y, x, cat_cols, ratio_train, method_flag, degrees,
             y_pred = predict_labels(w_star,x_val)
             if method_flag == 5 or method_flag == 6:
                 y_pred = relabel_y_negative(y_pred)
-            accuracy_scores_grid[i,j] = get_accurarcy_score(y_pred,y_val)
+            accuracy_scores_grid[i,j] = get_accuracy_score(y_pred,y_val)
             degree_idx, lambda_idx = np.unravel_index(np.argmax(accuracy_scores_grid),accuracy_scores_grid.shape)
             accuracy_score = accuracy_scores_grid[degree_idx, lambda_idx]
             best_degree = degrees[degree_idx]
@@ -99,191 +100,88 @@ def degree_lambda_grid_search(y, x, cat_cols, ratio_train, method_flag, degrees,
     return best_degree, best_lambda, accuracy_score, accuracy_scores_grid
 
 
-# def cross_validation(y, x, cat_cols, method_flag, k_indices, k, degree = None, lambda_ = None, gamma = None):
-#     """Return the train and test losses of the selected method for the current fold """
-#     train_indices = np.delete(k_indices,k,axis = 0).ravel()
-#     x_train = x[train_indices]
-#     y_train = y[train_indices]
-#     x_test = x[k_indices[k]]
-#     y_test = y[k_indices[k]]
+def cross_validation(y, x, method_flag, k_indices, k, lambda_ = None, degree = None, gamma = None, max_iters = None):
+    """Return the train losses, test losses and accuracy score of the selected method for the current fold
 
-#     x_train_num, x_train_cat = split_numerical_categorical(x_train,cat_cols)
-#     x_test_num, x_test_cat = split_numerical_categorical(x_test,cat_cols)
+        Args: 
+            y           (numpy.ndarray): ground truth labels
+            x           (numpy.ndarray): preprocessed features
+            method_flag (int)          : flag indicating the method to use
+            k_indices   (numpy.ndarray): indices to use to build the validation set
+            k           (int)          : current fold
+            lambda_     (float)        : regularization coefficient
+            degree      (int)          : degree of the polynomial
+            gamma       (float)        : learning rate
+            max_iters   (int)          : maximum number of iterations
+        Returns:
+            float: training loss
+            float: validation loss
+            float: accuracy score
+    """
+    train_indices = np.delete(k_indices,k,axis = 0).ravel()
+    x_train = x[train_indices]
+    y_train = y[train_indices]
+    x_val = x[k_indices[k]]
+    y_val = y[k_indices[k]]
+    w_initial = np.zeros((x_train.shape[1]))
+    if method_flag == 1:
+        # Least squares GD
+        w_star, loss_tr = least_squares_GD(y_train,x_train,w_initial,max_iters,gamma)
+    elif method_flag == 2:
+        # least squares SGD
+        w_star, loss_tr = least_squares_SGD(y_train,x_train,w_initial,max_iters,gamma)
+    elif method_flag == 3:
+        # least squares 
+        w_star, loss_tr = least_squares(y_train,x_train)
+    elif method_flag == 4:
+        # Ridge regression
+        w_star, loss_tr = ridge_regression(y_train,x_train,lambda_)      
+    elif method_flag == 5:
+        # Logistic regression
+        y_train = relabel_y_non_negative(y_train)
+        w_star, loss_tr = logistic_regression(y_train,x_train,w_initial,max_iters,gamma)
+    elif method_flag == 6:
+        # Regularized logistic regression
+        y_train = relabel_y_non_negative(y_train)
+        w_star, loss_tr = reg_logistic_regression(y_train,x_train,w_initial,max_iters,gamma,lambda_)
+    y_pred = predict_labels(w_star,x_val)
+    if method_flag == 5 or method_flag == 6:
+        loss_va = calculate_loss_log(y_val, x_val, w_star)
+        y_pred = relabel_y_negative(y_pred)
+    else:
+        loss_va = np.sqrt(2*compute_mse(y_val,x_val,w_star))
+    accuracy_score = get_accuracy_score(y_pred,y_val)
+    return loss_tr, loss_va, accuracy_score
 
-#     ext_x_train_num = build_poly(x_train_num,degree)
-#     ext_x_test_num = build_poly(x_test_num,degree)
-
-#     ext_x_train = np.hstack((ext_x_train_num,x_train_cat))
-#     ext_x_test = np.hstack((ext_x_test_num,x_test_cat))
-    
-#     if method_flag == 1:
-#         # Least squares GD
-
-#     elif method_flag == 2:
-#         # least squares SGD
-
-#     elif method_flag == 3:
-#         # least squares 
-
-#     elif method_flag == 4:
-#         # Ridge regression
-#         w_star = ridge_regression(y_train,tx_train,lambda_)      
-#     elif method_flag == 5:
-#         # Logistic regression
-
-#     elif method_flag == 6:
-#         # Regularized logistic regression
-        
-    
-    
-#     loss_tr = compute_mse(y_train,tx_train,w_star)
-#     loss_te = compute_mse(y_test,tx_test,w_star)
-#     return loss_tr, loss_te
-
-
-def cross_validation_lambda_ridge_reg(y, x, k_indices, k, lambda_):
-    """Return the training and test loss of ridge regression for lambda 
-       crossvalidation.
+def k_fold_cross_validation(y, x, method_flag, k_fold, lambda_ = None, degree = None, gamma = None, max_iters = None, seed = 1):
+    """Return the train and validation losses and the accuracy score
     
         Args:
-            y          (numpy.ndarray): the ground truth labels
-            x          (numpy.ndarray): the features
-            k_indices  (numpy.ndarray): the indices for the k fold
-            k          (int)          : the current fold
-            lambda_    (float)        : the regularization coefficient
-        Returns:
-            numpy.ndarray: the training losses
-            numpy.ndarray: the test losses
-    """
-
-    train_indices = np.delete(k_indices,k,axis = 0).ravel()
-    x_train = x[train_indices]
-    y_train = y[train_indices]
-    x_test = x[k_indices[k]]
-    y_test = y[k_indices[k]]
-     
-    w_star, loss = ridge_regression(y_train,x_train,lambda_)
-    
-    loss_tr = loss
-    loss_te = compute_mse(y_test,x_test,w_star)
-    return loss_tr, loss_te
-
-def cross_validation_degree_lambda_ridge_reg(y, x, k_indices, k, degree, lambda_):
-    """Return the training and test loss of ridge regression for degree and lambda 
-       crossvalidation.
-       This function assumes that the feature matrix x has a one hot encoded 
-       categorical feature at its 3 last columns
-       
-       Args:
-            y          (numpy.ndarray): the ground truth labels
-            x          (numpy.ndarray): the features
-            k_indices  (numpy.ndarray): the indices for the k fold
-            k          (int)          : the current fold
-            degree     (int)          : the degree of the polynomial features
-            lambda_    (float)        : the regularization coefficient
+            y           (numpy.ndarray): ground truth labels
+            x           (numpy.ndarray): preprocessed features
+            method_flag (int)          : flag indicating the method to use
+            k_fold      (int)          : number of folds
+            lambda_     (float)        : regularization coefficient
+            degree      (int)          : degree of the polynomial
+            gamma       (float)        : learning rate
+            max_iters   (int)          : maximum number of iterations
+            seed        (float)        : seed for random methods
         Returns:
             numpy.ndarray: training losses
-            numpy.ndarray: test losses
+            numpy.ndarray: validation losses
+            numpy.ndarray: accuracy scores   
     """
+    k_indices = build_k_indices(y,k_fold,seed)
+    losses_tr = np.zeros(k_fold)
+    losses_va = np.zeros(k_fold)
+    accuracy_scores = np.zeros(k_fold)
+    for k in range(k_fold):
+        loss_tr, loss_va, accuracy_score = cross_validation(y,x,method_flag,k_indices,k,lambda_,degree,gamma,max_iters)
+        losses_tr[k] = loss_tr
+        losses_va[k] = loss_va
+        accuracy_scores[k] = accuracy_score
+    return losses_tr, losses_va, accuracy_scores
 
-    train_indices = np.delete(k_indices,k,axis = 0).ravel()
-    x_train = x[train_indices]
-    y_train = y[train_indices]
-    x_test = x[k_indices[k]]
-    y_test = y[k_indices[k]]
-
-    # Remove categorical cols
-    # Categorical columns are always the last ones by convention
-    # There are 3 categorical columns due to one hot encondig of PRI_jet_num = {0,1,2,3}
-    N_CAT_COLS = 3
-    cat_cols = x_train.shape[1] - np.asarray(range(1,N_CAT_COLS+1))
-    x_train_num, x_train_cat = split_numerical_categorical(x_train,cat_cols)
-    x_test_num, x_test_cat = split_numerical_categorical(x_test,cat_cols)
-
-    ext_x_train = build_poly(x_train_num, degree)
-    ext_x_test = build_poly(x_test_num, degree)
-
-    ext_x_train = np.hstack((ext_x_train,x_train_cat))
-    ext_x_test = np.hstack((ext_x_test,x_test_cat))
-     
-    w_star, loss = ridge_regression(y_train,ext_x_train,lambda_)
-    
-    loss_tr = loss
-    loss_te = compute_mse(y_test,ext_x_test,w_star)
-    return loss_tr, loss_te
-
-def cross_validation_ridge_reg_best_lambda(y, x, lambdas, k_fold, seed = 1):    
-    """Return the best lambda, the training and test rmse for ridge regression 
-        crossvalidation.
-    
-    Args:
-        y          (numpy.ndarray): the ground truth labels
-        x          (numpy.ndarray): the features
-        k_indices  (numpy.ndarray): the indices for the k fold
-        k          (int)          : the current fold
-        degree     (int)          : the degree of the polynomial features
-        lambda_    (float)        : the regularization coefficient
-    Returns:
-        numpy.ndarray: training losses
-        numpy.ndarray: test losses
-    """
-
-    # split data in k fold
-    k_indices = build_k_indices(y, k_fold, seed)
-   
-    # define lists to store the loss of training data and test data
-    rmse_tr = []
-    rmse_te = []
-      
-    for lambda_ in lambdas:
-        fold_rmse_tr = []
-        fold_rmse_te = []
-        for k in range(k_fold):
-            loss_tr, loss_te = cross_validation_lambda_ridge_reg(y,x,k_indices,k,lambda_)
-            fold_rmse_tr.append(np.sqrt(2*loss_tr))
-            fold_rmse_te.append(np.sqrt(2*loss_te))
-        rmse_tr.append(np.mean(fold_rmse_tr))
-        rmse_te.append(np.mean(fold_rmse_te))
-    return lambdas[np.argmin(rmse_te)], rmse_tr, rmse_te
-
-def cross_validation_ridge_reg_best_degree_best_lambda(y, x, degrees, lambdas, k_fold, seed = 1):    
-    """Return the best degree, the best lambda, the training and test rmse for ridge regression 
-        crossvalidation.
-       
-       Args:
-            y          (numpy.ndarray): the ground truth labels
-            x          (numpy.ndarray): the features
-            k_indices  (numpy.ndarray): the indices for the k fold
-            k          (int)          : the current fold
-            degree     (int)          : the degree of the polynomial features
-            lambda_    (float)        : the regularization coefficient
-        Returns:
-            numpy.ndarray: training losses
-            numpy.ndarray: test losses
-    """
-
-    # split data in k fold
-    k_indices = build_k_indices(y, k_fold, seed)
-   
-    # define lists to store the loss of training data and test data
-    rmse_tr = np.zeros((len(degrees),len(lambdas))) 
-    rmse_te = np.zeros((len(degrees),len(lambdas)))
-    
-    for (i,degree) in enumerate(degrees):
-        for (j,lambda_) in enumerate(lambdas):
-            fold_rmse_tr = []
-            fold_rmse_te = []
-            for k in range(k_fold):
-                loss_tr, loss_te = cross_validation_degree_lambda_ridge_reg(y,x,k_indices,k, degree,lambda_)
-                fold_rmse_tr.append(np.sqrt(2*loss_tr))
-                fold_rmse_te.append(np.sqrt(2*loss_te))
-            rmse_tr[i,j] = np.mean(fold_rmse_tr)
-            rmse_te[i,j] = np.mean(fold_rmse_te)
-    min_val = np.min(rmse_te)
-    min_val_idxs = np.where(rmse_te == min_val)
-    best_degree = degrees[min_val_idxs[0][0]]
-    best_lambda = lambdas[min_val_idxs[1][0]]
-    return best_degree,best_lambda, rmse_tr, rmse_te
 
 def cross_validation_log(x, y, lambda_=0, gamma=0.001, max_iters=1000, k_fold=int(5), seed=28):
     """Train the model and evaluate loss based on cross validation
