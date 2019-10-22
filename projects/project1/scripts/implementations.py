@@ -20,13 +20,13 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """
     loss = []
     w = initial_w
-    for n_iter in range(max_iters):
+    for n_iter in range(1,max_iters+1):
         gradient = compute_gradient_mse(y,tx,w)
         w = w-gamma*gradient
         if (n_iter % 50 == 0):
             loss = compute_mse(y,tx,w)
             print("GD({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
-                  bi=n_iter+1, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+                  bi=n_iter+1, ti=max_iters, l=loss, w0=w[0], w1=w[1]))
 
     return w,loss
     
