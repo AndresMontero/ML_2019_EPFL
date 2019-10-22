@@ -54,13 +54,14 @@ def degree_lambda_grid_search(y, x, cat_cols, ratio_train, method_flag, degrees,
     x_val_ohe_cat = one_hot_encode(x_val_cat)
       
     accuracy_scores_grid = np.zeros((len(degrees),len(lambdas)))
-    w_initial = np.zeros((x_train.shape[1]))
+    
     for (j,lambda_ )in enumerate(lambdas):
         for (i,degree) in enumerate(degrees):
             ext_x_train_num = build_poly(x_train_num, degree)
             ext_x_val_num = build_poly(x_val_num, degree)
             x_train = np.hstack((ext_x_train_num,x_train_ohe_cat))
             x_val = np.hstack((ext_x_val_num, x_val_ohe_cat))
+            w_initial = np.zeros((x_train.shape[1]))
             
             if method_flag == 1:
                 # Least squares GD
@@ -165,11 +166,13 @@ def cross_validation(y, x, cat_cols, method_flag, k_indices, k, degree = None, l
         w_star, loss_tr = reg_logistic_regression(y_train,x_train,w_initial,max_iters,gamma,lambda_)
    
     if method_flag == 5 or method_flag == 6:
+        y_val = relabel_y_non_negative(y_val)
         loss_va = calculate_loss_log(y_val, x_val, w_star)
         y_pred = predict_labels_logistic(w_star,x_val)
     else:
         y_pred = predict_labels(w_star,x_val)
         loss_va = np.sqrt(2*compute_mse(y_val,x_val,w_star))
+    y_val = relabel_y_negative(y_val)
     accuracy_score = get_accuracy_score(y_pred,y_val)
     return loss_tr, loss_va, accuracy_score
 
