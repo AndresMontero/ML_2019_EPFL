@@ -117,7 +117,7 @@ def logistic_regression(y, tx, w_initial, max_iters, gamma):
             # print average loss for the last print_every iterations
             print(f"#Iteration: {n_iter}, Loss: {loss}")
       
-    loss = learning_by_gradient_descent_log(y, tx, w, gamma)
+    loss, _ = learning_by_gradient_descent_log(y, tx, w, gamma)
     
     return w, loss
 
@@ -151,6 +151,6 @@ def reg_logistic_regression(y, tx, w_initial, max_iters, gamma,lambda_):
             # print average loss for the last print_every iterations
             print(f"#Iteration: {n_iter}, Loss: {loss}")
                
-    loss = learning_by_reg_gradient_descent_log(y, tx, w, gamma,lambda_)
+    loss, _ = learning_by_reg_gradient_descent_log(y, tx, w, gamma,lambda_)
     
     return w, loss
