@@ -68,13 +68,13 @@ w_initial = np.zeros((x_train.shape[1], 1))
 weights,_ = reg_logistic_regression(y_train, x_train, w_initial, max_iters, gamma, lambda_)
 
 print("Validating model...")
-y_pred_val = predict_labels(weights,x_val)
+y_pred_val = predict_labels_logistic(weights,x_val)
 y_val = relabel_y_negative(y_val)
 acc_val = get_accuracy_score(y_pred_val,y_val)
 print("Accuracy on validation set: "+str(acc_val))
 
 print("Predicting test labels...")
-y_pred = predict_labels(weights, x_test)
+y_pred = predict_labels_logistic(weights, x_test)
 
 print("Generating file for submission...")
 create_csv_submission(ids_test, y_pred, "Reg_log_reg_submission.csv")

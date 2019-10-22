@@ -89,9 +89,11 @@ def degree_lambda_grid_search(y, x, cat_cols, ratio_train, method_flag, degrees,
                 w_star, loss = reg_logistic_regression(y_train,x_train,w_initial,max_iters,gamma,lambda_)
             if loss == np.nan:
                 break
-            y_pred = predict_labels(w_star,x_val)
+            
             if method_flag == 5 or method_flag == 6:
-                y_pred = relabel_y_negative(y_pred)
+                y_pred = predict_labels_logistic(w_star,x_val)
+            else:
+                y_pred = predict_labels(w_star,x_val)
             accuracy_scores_grid[i,j] = get_accuracy_score(y_pred,y_val)
             degree_idx, lambda_idx = np.unravel_index(np.argmax(accuracy_scores_grid),accuracy_scores_grid.shape)
             accuracy_score = accuracy_scores_grid[degree_idx, lambda_idx]
@@ -161,11 +163,12 @@ def cross_validation(y, x, cat_cols, method_flag, k_indices, k, degree = None, l
         # Regularized logistic regression
         y_train = relabel_y_non_negative(y_train)
         w_star, loss_tr = reg_logistic_regression(y_train,x_train,w_initial,max_iters,gamma,lambda_)
-    y_pred = predict_labels(w_star,x_val)
+   
     if method_flag == 5 or method_flag == 6:
         loss_va = calculate_loss_log(y_val, x_val, w_star)
-        y_pred = relabel_y_negative(y_pred)
+        y_pred = predict_labels_logistic(w_star,x_val)
     else:
+        y_pred = predict_labels(w_star,x_val)
         loss_va = np.sqrt(2*compute_mse(y_val,x_val,w_star))
     accuracy_score = get_accuracy_score(y_pred,y_val)
     return loss_tr, loss_va, accuracy_score
@@ -225,7 +228,7 @@ def cross_validation_log(x, y, lambda_=0, gamma=0.001, max_iters=1000, k_fold=in
     accuracy_tr = []
     accuracy_val = []
     
-    k_indices = build_k_indices(y, k_fold, seed);
+    k_indices = build_k_indices(y, k_fold, seed)
     for i in range(k_fold):
         newk_index = np.delete(k_indices, i, 0)
         indices_train = newk_index.ravel()
