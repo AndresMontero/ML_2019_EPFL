@@ -100,12 +100,13 @@ def degree_lambda_grid_search(y, x, cat_cols, ratio_train, method_flag, degrees,
     return best_degree, best_lambda, accuracy_score, accuracy_scores_grid
 
 
-def cross_validation(y, x, method_flag, k_indices, k, lambda_ = None, degree = None, gamma = None, max_iters = None):
+def cross_validation(y, x, cat_cols, method_flag, k_indices, k, degree = None, lambda_ = None,  gamma = None, max_iters = None):
     """Return the train losses, test losses and accuracy score of the selected method for the current fold
 
         Args: 
             y           (numpy.ndarray): ground truth labels
             x           (numpy.ndarray): preprocessed features
+            cat_cols    (list)         : list of categorical columns
             method_flag (int)          : flag indicating the method to use
             k_indices   (numpy.ndarray): indices to use to build the validation set
             k           (int)          : current fold
@@ -123,6 +124,22 @@ def cross_validation(y, x, method_flag, k_indices, k, lambda_ = None, degree = N
     y_train = y[train_indices]
     x_val = x[k_indices[k]]
     y_val = y[k_indices[k]]
+
+    x_train_num, x_train_cat = split_numerical_categorical(x_train, cat_cols)
+    x_val_num, x_val_cat = split_numerical_categorical(x_val, cat_cols)
+
+    x_train_num, mean, std = preprocess_num_features_fit(x_train_num)
+    x_val_num = preprocess_num_features_transform(x_val_num, mean, std)
+
+    x_train_ohe_cat = one_hot_encode(x_train_cat)
+    x_val_ohe_cat = one_hot_encode(x_val_cat)
+
+    ext_x_train_num = build_poly(x_train_num, degree)
+    ext_x_val_num = build_poly(x_val_num, degree)
+
+    x_train = np.hstack((ext_x_train_num,x_train_ohe_cat))
+    x_val = np.hstack((ext_x_val_num, x_val_ohe_cat))
+
     w_initial = np.zeros((x_train.shape[1]))
     if method_flag == 1:
         # Least squares GD
@@ -153,16 +170,17 @@ def cross_validation(y, x, method_flag, k_indices, k, lambda_ = None, degree = N
     accuracy_score = get_accuracy_score(y_pred,y_val)
     return loss_tr, loss_va, accuracy_score
 
-def k_fold_cross_validation(y, x, method_flag, k_fold, lambda_ = None, degree = None, gamma = None, max_iters = None, seed = 1):
+def k_fold_cross_validation(y, x, cat_cols, method_flag, k_fold, degree = None, lambda_ = None, gamma = None, max_iters = None, seed = 1):
     """Return the train and validation losses and the accuracy score
     
         Args:
             y           (numpy.ndarray): ground truth labels
             x           (numpy.ndarray): preprocessed features
+            cat_cols    (list)         : list of categorical columns
             method_flag (int)          : flag indicating the method to use
             k_fold      (int)          : number of folds
-            lambda_     (float)        : regularization coefficient
             degree      (int)          : degree of the polynomial
+            lambda_     (float)        : regularization coefficient
             gamma       (float)        : learning rate
             max_iters   (int)          : maximum number of iterations
             seed        (float)        : seed for random methods
@@ -176,7 +194,7 @@ def k_fold_cross_validation(y, x, method_flag, k_fold, lambda_ = None, degree = 
     losses_va = np.zeros(k_fold)
     accuracy_scores = np.zeros(k_fold)
     for k in range(k_fold):
-        loss_tr, loss_va, accuracy_score = cross_validation(y,x,method_flag,k_indices,k,lambda_,degree,gamma,max_iters)
+        loss_tr, loss_va, accuracy_score = cross_validation(y,x,cat_cols,method_flag,k_indices,k,degree,lambda_,gamma,max_iters)
         losses_tr[k] = loss_tr
         losses_va[k] = loss_va
         accuracy_scores[k] = accuracy_score
