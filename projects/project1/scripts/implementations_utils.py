@@ -98,9 +98,11 @@ def learning_by_reg_gradient_descent_log(y, tx, w, gamma, lambda_):
     w -= gamma * grad
     return loss, w
 
-##########
+
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
+    Function provided in the lessons
+    
     Generate a minibatch iterator for a dataset.
     Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
     Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.

@@ -1,6 +1,6 @@
 # EPFL CS-433 Machine Learning - Project I
 
-This project consists in the training of a model to classify if a given particule is a Higgs Bosson or not, the data used is from CERN.
+This project consists in the training of a machine learning model to identify the pressence or abscence of a Higgs boson. The dataset used comes from CERN.
 
 ## Overview of the project's code
 
@@ -43,7 +43,8 @@ These are the steps to follow:
    Windows: open the Anaconda Prompt from the Start menu.
 3. Change the directory to the location of the compressed zip file of the project or wherever you want to unzip it.
 4. Unzip the zip file of the project with `unzip -a mlProject1.zip`
-5. Create the environment required with the packages required for the project with `conda env create -f environment.yml`.
+5. Copy your data files to the folder named data. (train.csv and test.csv)
+6. Create the environment required with the packages required for the project with `conda env create -f environment.yml`.
 
 Every time you want to run the project you should:
 
@@ -60,9 +61,8 @@ Every time you want to run the project you should:
 1. In the correct directory run the run.py script in the terminal `python run.py`
    A new file called "submission.csv" will be generated, which contains the predictions and can be uploaded to https://www.aicrowd.com/challenges/epfl-machine-learning-higgs-2019/submissions/new
 
-## View the process
-If you want to try the other methods or change some parameters, it is possible to do it in the project1.ipynb through jupyter lab.
-
+## Try it yourself
+If you want to try the other methods, change some parameters or check the crossvalidation, it is possible to do it on the notebook project1.ipynb
 
 ## Authors
 
