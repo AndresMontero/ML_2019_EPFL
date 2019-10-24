@@ -26,7 +26,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
         if (n_iter % 50 == 0):
             loss = compute_mse(y,tx,w)
             print("GD({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
-                  bi=n_iter+1, ti=max_iters, l=loss, w0=w[0], w1=w[1]))
+                  bi=n_iter, ti=max_iters, l=loss, w0=w[0], w1=w[1]))
 
     return w,loss
     
