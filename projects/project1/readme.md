@@ -22,7 +22,7 @@ This project consists in the training of a model to classify if a given particul
 
 ## Prerequisites
 In order to run this project, you'll need the following tools:
-[git], [conda], [python], [jupyter], [numpy], [scipy], [matplotlib].
+[git], [conda], [python], [jupyter], [numpy], [matplotlib].
 
 [conda]: https://conda.io
 [python]: https://www.python.org
@@ -35,7 +35,7 @@ In order to run this project, you'll need the following tools:
 These are the steps to follow:
 
 1. Download the Python 3.7 installer for Windows, macOS, or Linux from <https://conda.io/miniconda.html> and install with default settings.
-   Skip this step if you have conda already installed Miniconda or Anaconda).
+   (Skip this step if you have conda already installed Miniconda or Anaconda).
    * Windows: double-click on `Miniconda3-latest-Windows-x86_64.exe`.
    * macOS: double-click on `Miniconda3-latest-MacOSX-x86_64.pkg` or run `bash Miniconda3-latest-MacOSX-x86_64.sh` in a terminal.
    * Linux: run `bash Miniconda3-latest-Linux-x86_64.sh` in a terminal or use your package manager.
@@ -57,8 +57,7 @@ Every time you want to run the project you should:
 
 ## Running the best method and generating a predictions file
 
-1. If your terminal is not in the location of the project files, change your directory to that location.
-2. In the correct directory run the run.py script in the terminal `python run.py`
+1. In the correct directory run the run.py script in the terminal `python run.py`
    A new file called "submission.csv" will be generated, which contains the predictions and can be uploaded to https://www.aicrowd.com/challenges/epfl-machine-learning-higgs-2019/submissions/new
 
 ## View the process
@@ -69,5 +68,5 @@ If you want to try the other methods or change some parameters, it is possible t
 
 - **Adrian Gabriel Villaroel Navia**
 - **Andres Ivan Montero Cassab**
-- **Erick Antero Maraz Zuñiga**
+- **Erick Antero Maraz Zuniga**
 
