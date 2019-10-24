@@ -10,10 +10,10 @@ This project consists in the training of a machine learning model to identify th
 ├── Scripts                          <- .py files of the models. utils and helpers
 │   ├── implementations_utils.py     <- utils for the main 6 models created
 │   ├── implementations.py           <- 6 models
-│   ├── proj1_cross_validation.py    <- Cross validation functions
+│   ├── project1.py    <- Cross validation functions
 │   ├── proj1_helpers.py             <- Helpers provided
 │   ├── proj1_utils.py               <- Data pre-processing functions
-│   └──  proj1_visualization.py       <- Visualization functions
+│   └── proj1_visualization.py       <- Visualization functions
 ├── run.py                           <- Best Model
 ├── Report
 │   ├── ML_AAE_2019.pdf              <-Report in .pdf format
@@ -44,7 +44,7 @@ These are the steps to follow:
 3. Change the directory to the location of the compressed zip file of the project or wherever you want to unzip it.
 4. Unzip the zip file of the project with `unzip -a mlProject1.zip`
 5. Copy your data files to the folder named 'data' or unzip the provided ones there.
-6. Create the environment required with the packages required for the project with `conda env create -f environment.yml`.
+6. Create the environment required with the packages required for the project with `conda env create -f environment.yaml`.
 
 Every time you want to run the project you should:
 
@@ -69,4 +69,3 @@ If you want to try the other methods, change some parameters or check the crossv
 - **Adrian Gabriel Villaroel Navia**
 - **Andres Ivan Montero Cassab**
 - **Erick Antero Maraz Zuniga**
-
