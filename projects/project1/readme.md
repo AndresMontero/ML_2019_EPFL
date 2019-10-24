@@ -43,7 +43,7 @@ These are the steps to follow:
    Windows: open the Anaconda Prompt from the Start menu.
 3. Change the directory to the location of the compressed zip file of the project or wherever you want to unzip it.
 4. Unzip the zip file of the project with `unzip -a mlProject1.zip`
-5. Copy your data files to the folder named data. (train.csv and test.csv)
+5. Copy your data files to the folder named 'data' or unzip the provided ones there.
 6. Create the environment required with the packages required for the project with `conda env create -f environment.yml`.
 
 Every time you want to run the project you should:
