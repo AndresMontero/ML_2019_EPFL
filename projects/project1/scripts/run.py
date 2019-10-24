@@ -78,7 +78,7 @@ y_pred = predict_labels_logistic(weights, x_test)
 
 print("Generating file for submission...")
 create_csv_submission(ids_test, y_pred, "Reg_log_reg_submission.csv")
-print("File generated")
+print("File generated: Reg_log_reg_submission.csv")
 
 
   
