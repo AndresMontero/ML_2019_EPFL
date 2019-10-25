@@ -5,30 +5,30 @@
     ## Overview of the project's code
 
     ```
-    ├── data                             <- Copy Data .csv Files inside
-    ├── results                          <- Results of the models
-    ├── Scripts                          <- .py files of the models. utils and helpers
+    ├── data                             <- Dataset is inside the folder
+    │   ├── dataset.zip                  <- Unzip .csv Files inside the current folder
+    ├── results                          <- Plots of the best model
+    ├── scripts                          <- scripts from the project
+    │   └── project1.ipynb               <- jupyter notebook to test the models
     │   ├── implementations_utils.py     <- utils for the main 6 models created
     │   ├── implementations.py           <- 6 models
-    │   ├── project1.py    <- Cross validation functions
+    │   ├── proj1_cross_validations.py   <- Cross validation functions
     │   ├── proj1_helpers.py             <- Helpers provided
-    │   ├── proj1_utils.py               <- Data pre-processing functions
+    │   ├── proj1_utils.py               <- Data pre-processing and utils
     │   └── proj1_visualization.py       <- Visualization functions
-    ├── run.py                           <- Best Model
-    ├── Report
-    │   ├── ML_AAE_2019.pdf              <-Report in .pdf format
-    │   └── ML_AAE_2019.tex              <-Report in LaTeX format
+    │   └── run.py                       <- Best Model
+    ├── readme.md                        <- Readme of the project
+    ├── ML_AAE_2019.pdf                  <- Report in .pdf format
     ```
 
     ## Prerequisites
 
     In order to run this project, you'll need the following tools:
-    [git], [conda], [python], [jupyter], [numpy], [matplotlib].
+    [conda], [python], [jupyter], [numpy], [matplotlib].
 
     [conda]: https://conda.io
     [python]: https://www.python.org
     [jupyter]: https://jupyter.org
-    [git]: https://git-scm.com
     [numpy]: https://www.numpy.org
     [matplotlib]: https://matplotlib.org
 
@@ -50,7 +50,7 @@
 
     ## Running the best method and generating a predictions file
 
-    1. In the correct directory run the run.py script in the terminal `python run.py`
+    1. Go to the scripts folder. To run the run.py script in the terminal `python run.py`
        A new file called "submission.csv" will be generated, which contains the predictions and can be uploaded to https://www.aicrowd.com/challenges/epfl-machine-learning-higgs-2019/submissions/new
 
     ## Try it yourself
