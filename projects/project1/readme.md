@@ -5,7 +5,7 @@
     ## Overview of the project's code
 
     ```
-    ├── data                             <- Dataset is inside the folder
+    ├── data                             <- Dataset must be in the folder
     │   ├── dataset.zip                  <- Unzip .csv Files inside the current folder
     ├── results                          <- Plots of the best model
     ├── scripts                          <- scripts from the project
@@ -43,7 +43,7 @@
        Windows: open the Anaconda Prompt from the Start menu.
     3. Change the directory to the location of the compressed zip file of the project or wherever you want to unzip it.
     4. Unzip the zip file of the project with `unzip -a mlProject1.zip`
-    5. Copy your data files to the folder named 'data' or unzip the provided ones there.
+    5. Copy your data files to the folder named 'data'.
     6. Open a terminal.
        Windows: open the Anaconda Prompt from the Start menu.
     7. Navigate to the folder where you stored the project `cd path/to/folder/ml_pro1`.
@@ -59,6 +59,6 @@
 
     ## Authors
 
-    - **Adrian Gabriel Villaroel Navia**
+    - **Adrian Gabriel Villarroel Navia**
     - **Andres Ivan Montero Cassab**
     - **Erick Antero Maraz Zuniga**
