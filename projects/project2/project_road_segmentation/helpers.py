@@ -166,7 +166,7 @@ def imag_rotation_aug(Xr, Yr, number_rotations=8):
 
     return Xrs_shuf, Yrs_shuf
 
-def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16):
+def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 456):
     """Creates Minibatch to pass to the generator of the model .
     Args:
         X (image): Images features
@@ -190,7 +190,7 @@ def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16):
             # Select a random index representing an image
             random_index = np.random.choice(num_images)
             # Width of original image
-            width = 456
+            width = width
             # Sample a random window from the image
             random_sample = np.random.randint(w_size // 2, width - w_size // 2, 2)
             # Create a sub image of size w_size x w_size
