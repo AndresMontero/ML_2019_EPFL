@@ -1,27 +1,55 @@
 # Project Road Segmentation
 ## Overview
-The aim of this project is to be able to classify patches of satellite images and tell if they correspond to roads or correspond to background. To accomplish this
-task we
+The aim of this project is to be able to classify patches of satellite images and tell if they correspond to roads or correspond to background. To accomplish this task we propose 3 neural network architectures implemented using the framework [Tensorflow 2.0](https://www.tensorflow.org). Specifically we are using the high-level API Keras.   
+
+This repository contains all the files required to train the architectures, generate their history plots and run the best model with its optimum weights.  
+## Setup
+As the architectures are complex, it is recommended to use a computer with a GPU able to communicate with tensorflow. We are going to explain the setup for NVDIA GPUs supporting CUDA which is a parallel computing platform that allows to use the GPU for general purpose processing. However, if a GPU cannot be used, we propse an alternative setup using Google Colab.
+
+To check if your GPU supports CUDA go to the following link: https://developer.nvidia.com/cuda-gpus.
+
+## Setup for GPU-CUDA enabled computers
+1. Download and install the latest version of [anaconda](https://www.anaconda.com/distribution/) for the corresponding Python 3.7 according to your OS.
+2. Create a Python environment by opening a terminal (in Linux or MacOs or an Anaconda prompt shell in Windows) and running the following command `conda create --name <replace-name-of-env>`.
+3. Activate the Python environment with the command `conda activate <replace-name-of-env>`.
+4. Open the link [TensorFlow's installation instructions](https://www.tensorflow.org/install/gpu) and follow them.
+
+After following these steps you should have tensorflow ready to go.
+
+### Packages installation
+Don't close the terminal with the environment yet! We need to install additional packages
+-
+-
+-
+
+## Alternative Setup Google Colab
+1. Upload the folder containing all the files and to
+
+
+
+
+
+
+
 ## Implemented solutions
 ### Baseline
 We used a logistic regression model as a baseline, it achieved an f1 score of
  and an accuracy score of
 ### ConvNet
 This implementation is a CNN with several layers
-### UNet
+### UNetÂ
 This is an architecture
 ### ResNet-UNet
 This arquitecture implements unet
 
 ## Contents
-+-- _config.yml
-+-- _drafts
-|   +-- begin-with-the-crazy-ideas.textile
+```
++--
++--
 |   +-- on-simplicity-in-technology.markdown
-+-- _includes
-|   +-- footer.html
-|   +-- header.html
-+-- _layouts
++-- results                                          <-- Plots of the best model
++-- scripts                                          <-- Notebooks with the architectures
+|   
 |   +-- default.html
 |   +-- post.html
 +-- _posts
@@ -31,9 +59,8 @@ This arquitecture implements unet
 |   +-- members.yml
 +-- _site
 +-- index.html
+```
 
-## Setup
-### Packages
 
 ## Usage
 
