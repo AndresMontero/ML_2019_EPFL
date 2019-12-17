@@ -6,41 +6,36 @@ import numpy as np
 from PIL import Image
 import re
 
-
-
-
-def load_image(infilename):
-    """Load image from directory.
+def load_image(filename):
+    """Load img from directory.
     Args:
-        infilename (string): path of the directory
+        filename (string): path of the directory
     Returns:
-       image (numpy.float64): image loaded
+       img (numpy.float64): img loaded
     """
-    image = mpimg.imread(infilename)
-    return image
+    img = mpimg.imread(filename)
+    return img
 
-def crop_image(image, w, h):
-    """Divides image and returns the patches.
+def crop_image(img, w, h):
+    """Divides img and returns the patches.
     Args:
-        image (image): Input image
+        img (image): Input image
         w (numpy.int64): the width of the image
         h (numpy.int64): the height of the image
     Returns:
        list_Patches (list[]): list of patches
     """
     list_Patches = []
-    image_width = image.shape[0]
-    image_height = image.shape[1]
-    for i in range(0,image_height,h):
-        for j in range(0,image_width,w):
-            if len(image.shape) < 3:
-                im_patch = image[j:j+w, i:i+h]
+    img_width = img.shape[0]
+    img_height = img.shape[1]
+    for i in range(0,img_height,h):
+        for j in range(0,img_width,w):
+            if len(img.shape) < 3:
+                im_patch = img[j:j+w, i:i+h]
             else:
-                im_patch = image[j:j+w, i:i+h, :]
+                im_patch = img[j:j+w, i:i+h, :]
             list_Patches.append(im_patch)
     return list_Patches
-
-
 
 def pad_matrix(mat, h_pad, w_pad, val=0):
     """Add padd to images.
@@ -85,7 +80,7 @@ def imag_rotation(X, Y, number_rotations=8):
     w = X.shape[1]
     w_2 = w // 2  # half of the width
     padding = 82
-    padding2 = 28
+    padding2 = 24
     Xrs = X
     Yrs = Y
 
@@ -166,7 +161,7 @@ def imag_rotation_aug(Xr, Yr, number_rotations=8):
 
     return Xrs_shuf, Yrs_shuf
 
-def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 456):
+def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 448):
     """Creates Minibatch to pass to the generator of the model .
     Args:
         X (image): Images features
@@ -232,10 +227,10 @@ def create_patches(X, patch_size, stride, padding):
     return img_patches 
 
 
-def cut_image_for_submission(image, w, h, stride, padding):
+def cut_image_for_submission(img, w, h, stride, padding):
     """Cuts images in patches to submit to Aicrowd.
     Args:
-        image (image): Images features
+        img (image): Images features
         w (numpy.int64): width
         h (numpy.int64): height
         stride (numpy.int64): stride 
@@ -244,13 +239,13 @@ def cut_image_for_submission(image, w, h, stride, padding):
         list_Patches : list of the patches to submit
     """
     list_Patches = []
-    width = image.shape[0]
-    height = image.shape[1]
-    image = np.lib.pad(image, ((padding, padding), (padding, padding), (0,0)), 'reflect')
+    width = img.shape[0]
+    height = img.shape[1]
+    img = np.lib.pad(img, ((padding, padding), (padding, padding), (0,0)), 'reflect')
     for i in range(padding,height+padding,stride):
         for j in range(padding,width+padding,stride):
-            image_patch = image[j-padding:j+w+padding, i-padding:i+h+padding, :]
-            list_Patches.append(image_patch)
+            img_patch = img[j-padding:j+w+padding, i-padding:i+h+padding, :]
+            list_Patches.append(img_patch)
     return list_Patches
 
 # assign a label to a patch
@@ -268,29 +263,26 @@ def patch_to_label(patch):
     else:
         return 0
 
-def mask_to_submission_strings(model, filename):
+def mask_to_submission_strings(model, filename, patch_size = 16):
     """Classifies the images of the test set for the submisiion.
     Args:
-        model (model): Trained Model
+        model (model): trained Model
         filename (string): path of the image
     Yields:
         Labels for patches of the image
     """
     img_number = int(re.search(r"\d+", filename).group(0))
-    image = load_image(filename)
-    image = image.reshape(1, image.shape[0], image.shape[1], image.shape[2])
-    labels = model.classify(image)
+    img = load_image(filename)
+    img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
+    labels = model.classify(img)
     labels = labels.reshape(-1)
-    patch_size = 16
     count = 0
     print("Processing image => " + filename)
-    for j in range(0, image.shape[2], patch_size):
-        for i in range(0, image.shape[1], patch_size):
+    for j in range(0, img.shape[2], patch_size):
+        for i in range(0, img.shape[1], patch_size):
             label = int(labels[count])
             count += 1
             yield("{:03d}_{}_{},{}".format(img_number, j, i, label))
-
-
 
 # def group_patches(patches, num_images):
 #     return patches.reshape(num_images, -1)

@@ -80,7 +80,7 @@ def imag_rotation(X, Y, number_rotations=8):
     w = X.shape[1]
     w_2 = w // 2  # half of the width
     padding = 82
-    padding2 = 28
+    padding2 = 24
     Xrs = X
     Yrs = Y
 
@@ -161,7 +161,7 @@ def imag_rotation_aug(Xr, Yr, number_rotations=8):
 
     return Xrs_shuf, Yrs_shuf
 
-def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 456):
+def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 448):
     """Creates Minibatch to pass to the generator of the model .
     Args:
         X (image): Images features
