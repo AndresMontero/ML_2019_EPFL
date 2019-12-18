@@ -4,6 +4,8 @@ import cv2
 import matplotlib.image as mpimg
 import numpy as np
 from PIL import Image
+import re
+
 
 def load_img(filename):
     """Load image from directory.
@@ -170,7 +172,7 @@ def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 
         patch_size (numpy.int64): size of the patches
     Yields:
         batch_images (images): batch of images to train
-        batch_labelss (list[int]): labels of the images in the batch
+        batch_labels (list[int]): labels of the images in the batch
     """
     num_images = n
     w_size = w_size
@@ -271,9 +273,9 @@ def mask_to_submission_strings(model, filename, patch_size = 16):
         Labels for patches of the image
     """
     img_number = int(re.search(r"\d+", filename).group(0))
-    img = load_image(filename)
+    img = load_img(filename)
     img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
-    labels = model.classify(img)
+    labels = model.classify_patches(img)
     labels = labels.reshape(-1)
     count = 0
     print("Processing image => " + filename)
@@ -288,7 +290,7 @@ def mask_to_submission_strings(model, filename, patch_size = 16):
 
 # Create the csv file
 def generate_submission(model, submission_filename, *image_filenames):
-    """ Generate a .csv file with the classification of the imges of the test set
+    """ Generate a .csv file with the classification of the imges of the test masket
     Args:
         model (model): Trained Model
         submission_filename (string): path of the image
