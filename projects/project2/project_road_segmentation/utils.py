@@ -6,8 +6,8 @@ import numpy as np
 from PIL import Image
 import re
 
-def load_image(filename):
-    """Load img from directory.
+def load_img(filename):
+    """Load image from directory.
     Args:
         filename (string): path of the directory
     Returns:
