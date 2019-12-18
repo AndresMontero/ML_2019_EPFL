@@ -59,6 +59,23 @@ class resnet_unet_model:
         self.STEPS_PER_EPOCH = STEPS_PER_EPOCH
         self.WIDTH = WIDTH
 
+    def load(self, filename):
+        """Loads Saved Model.
+        Args:
+           filename (string): name of the model
+
+        """
+        dependencies = {"recall": recall, "f1": f1}
+        self.model = load_model(filename, custom_objects=dependencies)
+
+    def save(self, filename):
+        """Saves trained model.
+        Args:
+           filename (string): name of the model
+
+        """
+        self.model.save(filename)
+
     def conv_act(self, inputs, out_filters, activation="relu"):
         """Create a 2D convolutional layer with an activation
             Args:
@@ -130,18 +147,15 @@ class resnet_unet_model:
             optimizer=Adam(lr=self.lr, amsgrad=self.amsgrad), loss="binary_crossentropy"
         )
 
-        # ResNet convolution outputs
         conv5_out = resnet50.get_layer("conv5_block3_out").output
         conv4_out = resnet50.get_layer("conv4_block6_out").output
         conv3_out = resnet50.get_layer("conv3_block4_out").output
         conv2_out = resnet50.get_layer("conv2_block3_out").output
 
-        # Max pool center layer
         pool = MaxPooling2D(max_pooling_size, strides=max_pooling_strd, padding="same")(
             resnet50.get_output_at(0)
         )
 
-        # Decoder center layer
         dec_center = self.decoder(
             pool,
             mid_filters=self.shape[0] * 2,
@@ -154,7 +168,6 @@ class resnet_unet_model:
         if self.dropout > 0:
             dec_center = Dropout(dropout)(dec_center)
 
-        # Decoder 5th layer
         cat1 = Concatenate()([dec_center, conv5_out])
         dec5 = self.decoder(
             cat1,
@@ -168,7 +181,6 @@ class resnet_unet_model:
         if self.dropout > 0:
             dec5 = Dropout(self.dropout)(dec5)
 
-        # Decoder 4th layer
         cat2 = Concatenate()([dec5, conv4_out])
         dec4 = self.decoder(
             cat2,
@@ -182,7 +194,6 @@ class resnet_unet_model:
         if self.dropout > 0:
             dec4 = Dropout(self.dropout)(dec4)
 
-        # Decoder 3rd layer
         cat3 = Concatenate()([dec4, conv3_out])
         dec3 = self.decoder(
             cat3,
@@ -196,7 +207,6 @@ class resnet_unet_model:
         if self.dropout > 0:
             dec3 = Dropout(self.dropout)(dec3)
 
-        # Decoder 2nd layer
         cat2 = Concatenate()([dec3, conv2_out])
         dec2 = self.decoder(
             cat2,
@@ -210,7 +220,6 @@ class resnet_unet_model:
         if self.dropout > 0:
             dec2 = Dropout(self.dropout)(dec2)
 
-        # Decoder 1st layer
         dec1 = self.decoder(
             dec2,
             mid_filters=int(self.shape[0] // 2),
@@ -242,13 +251,15 @@ class resnet_unet_model:
             metrics=["accuracy", recall, f1],
         )
 
-        # Print summary
         model.summary()
 
         return model
 
     def train(self, X_train, Y_train, n_train,  X_val, Y_val, n_val):
         """ Train the model
+
+        Returns:
+            History (History_Keras): History of the training
         """
 
         e_stop_patience = 10
@@ -274,7 +285,6 @@ class resnet_unet_model:
 
         cbs = [save_best_model, red_lr, e_stop]
 
-        # Train the model
         history = self.model.fit_generator(
             create_minibatch(
                 X_train,
@@ -306,30 +316,7 @@ class resnet_unet_model:
         Returns:
             Predictions : Predictions for each patch
         """
-        # Subdivide the images into blocks with a stride and patch_size of 16
         img_patches = create_patches(X, 16, 16, padding=24)
-
-        # Predict
         predictions = self.model.predict(img_patches)
         predictions = (predictions[:, 0] < predictions[:, 1]) * 1
-
-        # Regroup patches into images
         return predictions.reshape(X.shape[0], -1)
-
-    def load(self, filename):
-        """Loads Saved Model.
-        Args:
-           filename (string): name of the model
-
-        """
-        # Load the model (used for submission)
-        dependencies = {"recall": recall, "f1": f1}
-        self.model = load_model(filename, custom_objects=dependencies)
-
-    def save(self, filename):
-        """Saves trained model.
-        Args:
-           filename (string): name of the model
-
-        """
-        self.model.save(filename)
