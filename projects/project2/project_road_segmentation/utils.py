@@ -4,7 +4,6 @@ import cv2
 import matplotlib.image as mpimg
 import numpy as np
 from PIL import Image
-import re
 
 def load_img(filename):
     """Load image from directory.
