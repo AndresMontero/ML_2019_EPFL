@@ -35,12 +35,12 @@ class CNN:
         self.EPOCHS = EPOCHS
         self.STEPS_PER_EPOCH = STEPS_PER_EPOCH
         self.WIDTH = WIDTH
-        
+
     def load(self, filename):
         """Loads Saved Model.
         Args:
            filename (string): name of the model
-           
+
         """
         dependencies = {
             "recall": recall,
@@ -52,10 +52,10 @@ class CNN:
         """Saves trained model.
         Args:
            filename (string): name of the model
-           
+
         """
         self.model.save(filename)
-        
+
     def initialize_U_NET(self, shape):
         """Create Network Architecture.
         Args:
@@ -162,4 +162,3 @@ class CNN:
         predictions = (predictions[:, 0] < predictions[:, 1]) * 1
 
         return predictions.reshape(X.shape[0], -1)
-
