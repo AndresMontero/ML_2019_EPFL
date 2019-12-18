@@ -264,7 +264,7 @@ def patch_to_label(patch):
         return 0
 
 def mask_to_submission_strings(model, filename, patch_size = 16):
-    """Classifies the images of the test set for the submisiion.
+    """Classifies the images of the test set for the submission.
     Args:
         model (model): trained Model
         filename (string): path of the image
