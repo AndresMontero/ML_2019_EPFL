@@ -4,6 +4,7 @@ import cv2
 import matplotlib.image as mpimg
 import numpy as np
 from PIL import Image
+import re
 
 def load_img(filename):
     """Load image from directory.
@@ -271,7 +272,7 @@ def mask_to_submission_strings(model, filename, patch_size = 16):
         Labels for patches of the image
     """
     img_number = int(re.search(r"\d+", filename).group(0))
-    img = load_image(filename)
+    img = load_img(filename)
     img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
     labels = model.classify(img)
     labels = labels.reshape(-1)
