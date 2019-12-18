@@ -7,15 +7,13 @@ from PIL import Image
 import re
 from tensorflow.keras import backend as K
 
-
-
 def precision(y_true, y_pred):
     """Compute the Precision for the batch.
     Args:
         y_true (numpy.ndarray): the ground truth labels
-        y_pred (numpy.ndarray): the predicted labels 
+        y_pred (numpy.ndarray): the predicted labels
     Returns:
-        Precision (numpy.float64): the Precision of the batch 
+        Precision (numpy.float64): the Precision of the batch
     """
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
@@ -27,9 +25,9 @@ def recall(y_true, y_pred):
     """Compute the Recall for the batch.
     Args:
         y_true (numpy.ndarray): the ground truth labels
-        y_pred (numpy.ndarray): the predicted labels 
+        y_pred (numpy.ndarray): the predicted labels
     Returns:
-       Recall (numpy.float64): the Recal of the batch 
+       Recall (numpy.float64): the Recal of the batch
     """
 
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
@@ -42,9 +40,9 @@ def f1(y_true, y_pred):
     """Compute the F-1 for the batch.
     Args:
         y_true (numpy.ndarray): the ground truth labels
-        y_pred (numpy.ndarray): the predicted labels 
+        y_pred (numpy.ndarray): the predicted labels
     Returns:
-       F-1 (numpy.float64): the F-1 of the batch 
+       F-1 (numpy.float64): the F-1 of the batch
     """
     p = precision(y_true, y_pred)
     r = recall(y_true, y_pred)
@@ -132,7 +130,6 @@ def imag_rotation(X, Y, number_rotations=8):
     ### Add padding2
     Xrs = pad_matrix(Xrs, padding2, padding2)
     Yrs = pad_matrix(Yrs, padding2, padding2)
-    ###
 
     Xrs = np.expand_dims(Xrs, 0)
     Yrs = np.expand_dims(Yrs, 0)
@@ -169,7 +166,6 @@ def imag_rotation(X, Y, number_rotations=8):
         ### Add padding2
         Xr = pad_matrix(Xr, padding2, padding2)
         Yr = pad_matrix(Yr, padding2, padding2)
-        ###
 
         Xr = np.expand_dims(Xr, 0)
         Yr = np.expand_dims(Yr, 0)
@@ -202,8 +198,6 @@ def imag_rotation_aug(Xr, Yr, number_rotations=8):
     for i in index_shuf:
         Xrs_shuf.append(Xrs[i])
         Yrs_shuf.append(Yrs[i])
-    # Add padding to the original images to validate borders
-
     return Xrs_shuf, Yrs_shuf
 
 def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 448):
@@ -211,8 +205,8 @@ def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 
     Args:
         X (image): Images features
         Y (image): Groundtruth images
-        w_size (numpy.int64): window size 
-        batch_size (numpy.int64): batch size to train the model 
+        w_size (numpy.int64): window size
+        batch_size (numpy.int64): batch size to train the model
         patch_size (numpy.int64): size of the patches
     Yields:
         batch_images (images): batch of images to train
@@ -222,35 +216,25 @@ def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 
     w_size = w_size
     batch_size = batch_size
     patch_size = patch_size
+    width = width
 
     while True:
         batch_images = np.empty((batch_size, w_size, w_size, 3))
         batch_labels = np.empty((batch_size, 2))
         for i in range(batch_size):
-            # Select a random index representing an image
             random_index = np.random.choice(num_images)
-            # Width of original image
-            width = width
-            # Sample a random window from the image
             random_sample = np.random.randint(w_size // 2, width - w_size // 2, 2)
-            # Create a sub image of size w_size x w_size
             sampled_image = X[random_index][
                 random_sample[0] - w_size // 2 : random_sample[0] + w_size // 2,
                 random_sample[1] - w_size // 2 : random_sample[1] + w_size // 2,
             ]
-            # Take its corresponding ground-truth image
-            correspond_ground_truth = Y[random_index][
+            sampled_image_ground_truth = Y[random_index][
                 random_sample[0] - patch_size // 2 : random_sample[0] + patch_size // 2,
                 random_sample[1] - patch_size // 2 : random_sample[1] + patch_size // 2,
             ]
-
-            # We set in the label depending on the threshold of 0.25
-            # The label becomes either 0 or 1 by applying to_categorical with parameter 2
             label = to_categorical(
-                (np.array([np.mean(correspond_ground_truth)]) > 0.25) * 1, 2
+                (np.array([np.mean(sampled_image_ground_truth)]) > 0.25) * 1, 2
             )
-
-            # We put in the sub image and its corresponding label before yielding it
             batch_images[i] = sampled_image
             batch_labels[i] = label
         yield (batch_images, batch_labels)
@@ -260,7 +244,7 @@ def create_patches(X, patch_size, stride, padding):
     Args:
         X (image): Images features
         patch_size (numpy.int64): patch size
-        stride (numpy.int64): stride 
+        stride (numpy.int64): stride
         padding (numpy.int64): padding
     Returns:
         img_patches (images): patches of the image
@@ -268,8 +252,8 @@ def create_patches(X, patch_size, stride, padding):
     """
     img_patches = np.asarray([cut_image_for_submission(X[i], patch_size, patch_size, stride, padding) for i in range(X.shape[0])])
     img_patches = img_patches.reshape(-1, img_patches.shape[2], img_patches.shape[3], img_patches.shape[4])
-    
-    return img_patches 
+
+    return img_patches
 
 
 def cut_image_for_submission(img, w, h, stride, padding):
@@ -278,7 +262,7 @@ def cut_image_for_submission(img, w, h, stride, padding):
         img (image): Images features
         w (numpy.int64): width
         h (numpy.int64): height
-        stride (numpy.int64): stride 
+        stride (numpy.int64): stride
         padding (numpy.int64): padding
     Returns:
         list_Patches : list of the patches to submit
@@ -293,7 +277,6 @@ def cut_image_for_submission(img, w, h, stride, padding):
             list_Patches.append(img_patch)
     return list_Patches
 
-# assign a label to a patch
 def patch_to_label(patch):
     """Classifies patch to a label 0 or 1.
     Args:
@@ -329,7 +312,6 @@ def mask_to_submission_strings(model, filename, patch_size = 16):
             count += 1
             yield("{:03d}_{}_{},{}".format(img_number, j, i, label))
 
-# Create the csv file
 def generate_submission(model, submission_filename, *image_filenames):
     """ Generate a .csv file with the classification of the imges of the test masket
     Args:
@@ -341,5 +323,3 @@ def generate_submission(model, submission_filename, *image_filenames):
         f.write('id,prediction\n')
         for fn in image_filenames[0:]:
             f.writelines('{}\n'.format(s) for s in mask_to_submission_strings(model, fn))
-
-

@@ -129,7 +129,7 @@ class CNN:
             monitor="loss", factor=0.5, patience=4, verbose=1, cooldown=1,
         )
         save_best = ModelCheckpoint(
-            "CNN_dropout_0.25_1024-{epoch:03d}-{f1:03f}.h5",
+            "saved_models/CNN_dropout_0.25_1024-{epoch:03d}-{f1:03f}.h5",
             save_best_only=True,
             monitor="loss",
             verbose=1,

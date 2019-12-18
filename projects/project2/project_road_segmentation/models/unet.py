@@ -174,7 +174,7 @@ class U_NET:
             monitor="val_loss", factor=0.2, patience=5, verbose=1, cooldown=1,
         )
         save_best = ModelCheckpoint(
-            "Unet_batchnorm_validation-{epoch:03d}-{val_f1:03f}.h5",
+            "saved_models/Unet_batchnorm_validation-{epoch:03d}-{val_f1:03f}.h5",
             save_best_only=True,
             monitor="val_loss",
             verbose=1,

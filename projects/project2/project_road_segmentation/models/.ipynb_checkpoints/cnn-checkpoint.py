@@ -35,12 +35,12 @@ class CNN:
         self.EPOCHS = EPOCHS
         self.STEPS_PER_EPOCH = STEPS_PER_EPOCH
         self.WIDTH = WIDTH
-        
+
     def load(self, filename):
         """Loads Saved Model.
         Args:
            filename (string): name of the model
-           
+
         """
         dependencies = {
             "recall": recall,
@@ -52,10 +52,10 @@ class CNN:
         """Saves trained model.
         Args:
            filename (string): name of the model
-           
+
         """
         self.model.save(filename)
-        
+
     def initialize_U_NET(self, shape):
         """Create Network Architecture.
         Args:
@@ -129,7 +129,7 @@ class CNN:
             monitor="loss", factor=0.5, patience=4, verbose=1, cooldown=1,
         )
         save_best = ModelCheckpoint(
-            "CNN_dropout_0.25_1024-{epoch:03d}-{f1:03f}.h5",
+            "saved_models/CNN_dropout_0.25_1024-{epoch:03d}-{f1:03f}.h5",
             save_best_only=True,
             monitor="loss",
             verbose=1,
@@ -162,4 +162,3 @@ class CNN:
         predictions = (predictions[:, 0] < predictions[:, 1]) * 1
 
         return predictions.reshape(X.shape[0], -1)
-
