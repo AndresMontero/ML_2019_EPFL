@@ -71,12 +71,12 @@ class U_NET:
         self.EPOCHS = EPOCHS
         self.STEPS_PER_EPOCH = STEPS_PER_EPOCH
         self.WIDTH = WIDTH
-        
+
     def load(self, filename):
         """Loads Saved Model.
         Args:
            filename (string): name of the model
-           
+
         """
         # Load the model (used for submission)
         dependencies = {
@@ -89,11 +89,11 @@ class U_NET:
         """Saves trained model.
         Args:
            filename (string): name of the model
-           
+
         """
         self.model.save(filename)
-        
-        
+
+
     def initialize_U_NET(self, shape):
         """Create Network Architecture.
         Args:
@@ -159,8 +159,6 @@ class U_NET:
             metrics=["accuracy", recall, f1],
         )
 
-        model.summary()
-
         return model
 
     def train(self, X_train, Y_train, n_train,  X_val, Y_val, n_val):
@@ -212,5 +210,3 @@ class U_NET:
         predictions = (predictions[:, 0] < predictions[:, 1]) * 1
 
         return predictions.reshape(X.shape[0], -1)
-
-

@@ -1,5 +1,5 @@
 """ Course: Machine Learning
-    Projeect 2: Satelite Images Road Segmentation
+    Projeect 2: Satellite Images Road Segmentation
     Authors:
         - Maraz Erick
         - Montero Andres
@@ -9,13 +9,15 @@
 """
 # Imports needed for the project to run
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
+import tensorflow as tf
 from utils import *
 from models.cnn import *
+
+
 ############ Set random seed and print available CPU and GPU
 np.random.seed(8)
 print(device_lib.list_local_devices())
-
-
 
 
 ############ Define Parameters of the model
@@ -25,6 +27,7 @@ PATCH_SIZE = 16
 EPOCHS = 200
 STEPS_PER_EPOCH = 100
 WIDTH = 448
+print("############################# Instansiating Model")
 model = CNN(
     shape=(WINDOW_SIZE, WINDOW_SIZE, 3),
     BATCH_SIZE=BATCH_SIZE,
@@ -36,7 +39,7 @@ model = CNN(
 )
 FLAG_LOAD_WEIGTHS = True
 
-if !FLAG_LOADWEIGTHS:
+if not FLAG_LOAD_WEIGTHS:
     ############ Load Images
     print("Importing data...")
     image_dir_train = "data/training/images/"
@@ -61,18 +64,21 @@ if !FLAG_LOADWEIGTHS:
     print(Y_train.shape)
     n_train = Y_train.shape[0]
     history = model.train()
-    model.save("best_model.h5")
+    model.save("best_cnn.h5")
 else:
-    model.load("best_model.h5")
-
+    model.load("best_cnn.h5")
 
 ############ Generate submission file
-model.model.summary()
-test_images = []
-for i in range(1, 51):
-    test_images = "data/test_set_images/test_" + str(i) + "/test_" + str(i) + ".png"
-    test_images.append(test_images)
+print("############################# Loading Weights.......")
+model.load("best_cnn.h5")
 
-submission_filename = "best_model.csv"
-generate_submission(model, submission_filename, *test_images)
-print("File generated: ", submission_filename)
+print("############################# Loading Test Images.......")
+image_filenames = []
+for i in range(1, 51):
+    image_filename = "data/test_set_images/test_" + str(i) + "/test_" + str(i) + ".png"
+    image_filenames.append(image_filename)
+
+print("############################# Generating Submission file")
+submission_filename = "best_cnn.csv"
+generate_submission(model, submission_filename, *image_filenames)
+print("############################# File generated", submission_filename)
