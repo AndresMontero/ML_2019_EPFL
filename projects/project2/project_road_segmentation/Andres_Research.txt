@@ -1,6 +1,0 @@
-Previous Projects with good score:
-    * https://github.com/alielabridi/Satellite-Image-Classification/blob/master/training.ipynb
-    * https://github.com/idasand/CS-433-project-2
-    * https://github.com/joelmfonseca/CS-433/tree/master/project2
-    * https://github.com/haakonms/MLproject
-    * https://github.com/eddieshengyuwang/CS433_Road_Segmentation

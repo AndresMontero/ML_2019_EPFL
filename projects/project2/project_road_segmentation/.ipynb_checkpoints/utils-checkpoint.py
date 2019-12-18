@@ -5,6 +5,51 @@ import matplotlib.image as mpimg
 import numpy as np
 from PIL import Image
 import re
+from tensorflow.keras import backend as K
+
+
+
+def precision(y_true, y_pred):
+    """Compute the Precision for the batch.
+    Args:
+        y_true (numpy.ndarray): the ground truth labels
+        y_pred (numpy.ndarray): the predicted labels 
+    Returns:
+        Precision (numpy.float64): the Precision of the batch 
+    """
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    return precision
+
+
+def recall(y_true, y_pred):
+    """Compute the Recall for the batch.
+    Args:
+        y_true (numpy.ndarray): the ground truth labels
+        y_pred (numpy.ndarray): the predicted labels 
+    Returns:
+       Recall (numpy.float64): the Recal of the batch 
+    """
+
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    recall = true_positives / (possible_positives + K.epsilon())
+    return recall
+
+
+def f1(y_true, y_pred):
+    """Compute the F-1 for the batch.
+    Args:
+        y_true (numpy.ndarray): the ground truth labels
+        y_pred (numpy.ndarray): the predicted labels 
+    Returns:
+       F-1 (numpy.float64): the F-1 of the batch 
+    """
+    p = precision(y_true, y_pred)
+    r = recall(y_true, y_pred)
+    return 2 * ((p * r) / (p + r + K.epsilon()))
+
 
 def load_img(filename):
     """Load image from directory.
@@ -171,7 +216,7 @@ def create_minibatch(X, Y, n, w_size=64, batch_size=250, patch_size=16, width = 
         patch_size (numpy.int64): size of the patches
     Yields:
         batch_images (images): batch of images to train
-        batch_labelss (list[int]): labels of the images in the batch
+        batch_labels (list[int]): labels of the images in the batch
     """
     num_images = n
     w_size = w_size
@@ -274,22 +319,19 @@ def mask_to_submission_strings(model, filename, patch_size = 16):
     img_number = int(re.search(r"\d+", filename).group(0))
     img = load_img(filename)
     img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
-    labels = model.classify(img)
+    labels = model.classify_patches(img)
     labels = labels.reshape(-1)
     count = 0
-    print("Processing image => " + filename)
+    print("Generating predictions for image:  " + filename)
     for j in range(0, img.shape[2], patch_size):
         for i in range(0, img.shape[1], patch_size):
             label = int(labels[count])
             count += 1
             yield("{:03d}_{}_{},{}".format(img_number, j, i, label))
 
-# def group_patches(patches, num_images):
-#     return patches.reshape(num_images, -1)
-
 # Create the csv file
 def generate_submission(model, submission_filename, *image_filenames):
-    """ Generate a .csv file with the classification of the imges of the test set
+    """ Generate a .csv file with the classification of the imges of the test masket
     Args:
         model (model): Trained Model
         submission_filename (string): path of the image
