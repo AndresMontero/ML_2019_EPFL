@@ -9,7 +9,7 @@
 """
 # Imports needed for the project to run
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # to avoid verbose of cuda 
 import tensorflow as tf
 from utils import *
 from models.cnn import *
@@ -37,7 +37,7 @@ model = CNN(
     STEPS_PER_EPOCH=STEPS_PER_EPOCH,
     WIDTH=WIDTH,
 )
-FLAG_LOAD_WEIGTHS = False
+FLAG_LOAD_WEIGTHS = True # Set this to False if you want to train again the model, we recomend using the jupyter notebook Project2_CNN_collab on google colab, please review readme 
 
 if not FLAG_LOAD_WEIGTHS:
     ############ Load Images
@@ -65,12 +65,10 @@ if not FLAG_LOAD_WEIGTHS:
     n_train = Y_train.shape[0]
     history = model.train(X_train, Y_train, n_train)
     model.save("best_cnn.h5")
-else:
-    model.load("best_cnn.h5")
 
 ############ Generate submission file
 print("############################# Loading Weights.......")
-model.load("best_cnn.h5")
+model.load("best_cnn_colab.h5")
 
 print("############################# Loading Test Images.......")
 image_filenames = []
@@ -79,6 +77,6 @@ for i in range(1, 51):
     image_filenames.append(image_filename)
 
 print("############################# Generating Submission file")
-submission_filename = "best_cnn.csv"
+submission_filename = "best_cnn_colab.csv"
 generate_submission(model, submission_filename, *image_filenames)
 print("############################# File generated", submission_filename)
