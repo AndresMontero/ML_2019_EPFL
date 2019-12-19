@@ -19,12 +19,12 @@ with the same structure.
     └── cnn.py                                      <- CNN architecture file (best)
     └── resnet.py                                   <- RESNET_UNET architecture file
     └── unet.py                                     <- UNET architecture file
-├── saved_models									<- Folder where models are saved during training
+├── saved_models									                  <- Folder where models are saved during training
 ├── Project2_CNN.ipynb                              <- Notebook to run the CNN architecture (best model)         
-├── best_cnn_colab.h5                               <- weights of the best model generated in colab
+├── best_cnn_colab.h5                               <- Weights of the best model generated in colab
 ├── Project2_UNET.ipynb                             <- Notebook to run the UNET architecture
 ├── Project2_RESNET_UNET.ipynb                      <- Notebook to run the RESNET_UNET architecture
-├── tf_aerial_images.py                             <- .py file to run the baseline
+├── tf_aerial_images.py                             <- File to run the baseline
 ├── Project2_CNN_colab.ipynb                        <- Notebook to run the best model in Colab
 ├── run.py                                          <- File to run the best model predictions
 ├── utils.py                                        <- File containing utility functions
