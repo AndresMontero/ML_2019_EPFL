@@ -24,8 +24,8 @@ with the same structure.
 ├── best_cnn_colab.h5                               <- weights of the best model generated in colab
 ├── Project2_UNET.ipynb                             <- Notebook to run the UNET architecture
 ├── Project2_RESNET_UNET.ipynb                      <- Notebook to run the RESNET_UNET architecture
-├── Project2_segment_aerial_images.ipynb            <- Notebook to run the baseline provided
-├── Project2_CNN_colab.ipynb                       <- Notebook to run the best model in Colab
+├── tf_aerial_images.py                             <- .py file to run the baseline
+├── Project2_CNN_colab.ipynb                        <- Notebook to run the best model in Colab
 ├── run.py                                          <- File to run the best model predictions
 ├── utils.py                                        <- File containing utility functions
 ├── README.md                                       <- Readme file
@@ -76,14 +76,17 @@ following folder structure:
        └── images
        └── groundtruth
     `
-6. Run any of the notebooks
+7. Run any of the notebooks
 - Project2_CNN_colab.ipynb
 - Project2_CNN.ipynb
 - Project2_UNET.ipynb
 - Project2_RESNET_UNET.ipynb
-- Project2_segment_aerial_images.ipynb
+Or run the baseline:
+- tf_aerial_images.py
+Note: The baseline was tested with TensorFlow 1.13.2, which is not completely up to date.
+To 'downgrade': pip install --upgrade tensorflow==1.13.2
 
-To obtain the weights used for the final submission please run the Project2_CNN_colab.ipynb without changing the parameters following the guide in section "Alternative Setup Google Colab". 
+To obtain the weights used for the final submission please run the Project2_CNN_colab.ipynb without changing the parameters following the guide in section "Alternative Setup Google Colab".
 
 ## Run the predictions
 **Note: to run the predictions you  must keep the previous folder structure**
