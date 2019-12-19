@@ -35,9 +35,9 @@ with the same structure.
 * Windows: https://docs.anaconda.com/anaconda/install/windows/
 * MacOS: https://docs.anaconda.com/anaconda/install/mac-os/
 2. Open an anaconda shell (Windows) or terminal (Linux/MacOS) and run the following command:
-  `conda create --name road_seg anaconda python==3.7.5`.
+    `conda create --name road_seg anaconda python==3.7.5`.
 3. In the conda environment recently created, run the following commands:
-- `conda install -c conda-forge opencv==3.4.2`
+- `pip install opencv-python`
 - `pip install tensorflow==2.0.0`
 
 4. If you have access to a CUDA-enabled GPU you can install it following the instructions provided in this link [TensorFlow's installation instructions](https://www.tensorflow.org/install/gpu)
@@ -47,7 +47,7 @@ with the same structure.
 1. Download the zip file AAE_project2.zip of the project
 2. Got to the path containing the zip file and uncompress it
 3. Download the dataset
-[CrowdAI page](https://www.crowdai.org/challenges/epfl-ml-road-segmentation).
+[AICrowd_page](https://www.aicrowd.com/challenges/epfl-ml-road-segmentation-2019/dataset_files). And uncompress the training and test images in the data folder of the project
 4. Decompress the dataset in the folder data and make sure that you have the
 following folder structure:
 `|── data                               
@@ -61,7 +61,7 @@ following folder structure:
         └── groundtruth
 `
 5. (Important note) For the models UNET and RESNET_UNET you need to create a validating dataset, hence you have to take some images (we used 80-20), and groundtruths from the training set, create a folder named validating and insert them there. For the CCN model just keep the previous folder structure with the entire set of images.
-  `|── data                               
+    `|── data                               
    └── test_set_images
        └── test_1
        └── test_2
@@ -73,7 +73,7 @@ following folder structure:
    └── validating
        └── images
        └── groundtruth
-  `
+    `
 6. Run any of the notebooks
 - Project2_CNN_colab.ipynb
 - Project2_CNN.ipynb
