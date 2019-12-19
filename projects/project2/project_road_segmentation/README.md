@@ -13,7 +13,7 @@ with the same structure.
 
 ```
 |── data                                            <- Empty folder, copy the dataset here
-├── Report
+├── report
 │   ├── Machine_learning_AAE_project2_report.pdf    <- Report in .pdf format
 ├── models
     └── cnn.py                                      <- CNN architecture file (best)
