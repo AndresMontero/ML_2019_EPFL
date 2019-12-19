@@ -251,8 +251,6 @@ class resnet_unet_model:
             metrics=["accuracy", recall, f1],
         )
 
-        model.summary()
-
         return model
 
     def train(self, X_train, Y_train, n_train,  X_val, Y_val, n_val):
