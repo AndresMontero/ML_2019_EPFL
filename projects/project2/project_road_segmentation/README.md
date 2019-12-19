@@ -5,6 +5,8 @@ The aim of this project is to classify patches of satellite into roads or backgr
 This repository contains all the files required to train the architectures, generate their history plots and run the best model with its optimum weights.
 ## Team submission ID on AICrowd
 
+Andres Montero: 31018    
+
 ## Contents
 Depending on the model to run, the data should be separated in training and validation folders
 with the same structure.
@@ -16,11 +18,11 @@ with the same structure.
     └── cnn.py                                      <- CNN architecture file (best)
     └── resnet.py                                   <- RESNET_UNET architecture file
     └── unet.py                                     <- UNET architecture file
-├── Project2_CNN.ipynb                              <- Notebook to run the CNN architecture (best model)                               
+├── Project2_CNN.ipynb                              <- Notebook to run the CNN architecture (best model)         ├── best_cnn_colab.h5 
 ├── Project2_UNET.ipynb                             <- Notebook to run the UNET architecture
 ├── Project2_RESNET_UNET.ipynb                      <- Notebook to run the RESNET_UNET architecture
 ├── Project2_segment_aerial_images.ipynb            <- Notebook to run the baseline provided
-├── Project2_CNN_collab.ipynb                       <- Notebook to run the best model in Colab
+├── Project2_CNN_colab.ipynb                       <- Notebook to run the best model in Colab
 ├── run.py                                          <- File to run the best model predictions
 ├── utils.py                                        <- File containing utility functions
 ├── README.md                                       <- Readme file
@@ -77,10 +79,13 @@ following folder structure:
         └── groundtruth
 `
 6. Run any of the notebooks
-- Project2_CNN
+- Project2_CNN_colab.ipynb
+- Project2_CNN.ipynb
 - Project2_UNET.ipynb
 - Project2_RESNET_UNET.ipynb
 - Project2_segment_aerial_images.ipynb
+
+To obtain the weights used for the final submission please run the Project2_CNN_colab.ipynb without changing the parameters. 
 
 ## Run the predictions
 **Note: to run the predictions you  must keep the previous folder structure**
